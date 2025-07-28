@@ -27,15 +27,15 @@ Before running the application, ensure you have the following installed:
  - [Node.js](https://nodejs.org/) (v16 or later)
     ```bash
     #check with
-    node -v
+    $ node -v
  - [npm](https://www.npmjs.com/)(usually bundled with Node.js)
     ```bash
     #check with
-    npm -v
+    $ npm -v
  - [?DB UNSURE](?)(for database)
     ```bash
     #check with
-    ? -v
+    $ ? -v
 
 ---
 
@@ -43,22 +43,22 @@ Before running the application, ensure you have the following installed:
 
  1.**Clone the repository**:
     
-    git clone https://github.com/ziyuezhangd/wavedo.git
-    cd wavedo
+    $ git clone https://github.com/ziyuezhangd/wavedo.git
+    $ cd wavedo
 2.**Install dependencies**
     
-    npm install
+    $ npm install
 3.**Set up environment variables**
     
-    ???_URL=???:
+    $ ???_URL=???:
 
 ### Running the Application
 1.**Start [this is the DB we use]**
-    
 
+    $
 2.**Run the Application**
 
-    npm start
+    $npm start
 3.**Access the Application**
     Open the Browser and go to:
 
