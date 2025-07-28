@@ -1,7 +1,10 @@
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import path from 'path';
+
 const app = express();
 const port = 3000;
+
+const __dirname = path.resolve();
 
 // 让 Express 可以访问当前目录下的静态文件（如 HTML、CSS、JS）
 app.use(express.static(__dirname));
