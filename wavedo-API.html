@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Management Dashboard</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#1e40af',secondary:'#3b82f6'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+<div class="px-6 py-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-8">
+<div class="text-2xl font-['Pacifico'] text-primary">logo</div>
+<div class="hidden md:flex space-x-6">
+<a href="#" class="text-primary font-medium px-3 py-2 rounded-button">Dashboard</a>
+<a href="#" class="text-gray-600 hover:text-primary px-3 py-2 rounded-button">Portfolio</a>
+<a href="#" class="text-gray-600 hover:text-primary px-3 py-2 rounded-button">Analytics</a>
+<a href="#" class="text-gray-600 hover:text-primary px-3 py-2 rounded-button">Settings</a>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-primary">
+<i class="ri-notification-line ri-lg"></i>
+</button>
+<div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+<span class="text-white text-sm font-medium">JD</span>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<main class="px-6 py-8 max-w-7xl mx-auto">
+<div class="mb-8">
+<h1 class="text-3xl font-bold text-gray-900 mb-2">Portfolio Dashboard</h1>
+<p class="text-gray-600">Monitor and manage your investment portfolio</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="bg-white rounded-xl p-6 border border-gray-200">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-medium text-gray-600">Total Portfolio Value</h3>
+<div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg">
+<i class="ri-line-chart-line text-green-600"></i>
+</div>
+</div>
+<div class="text-2xl font-bold text-gray-900 mb-1">$847,392.50</div>
+<div class="flex items-center text-sm mb-2">
+<span class="text-green-600 font-medium">+2.34%</span>
+<span class="text-gray-500 ml-1">from last month</span>
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between text-sm">
+<span class="text-gray-500">Stocks</span>
+<span class="text-gray-900">$224,791.80</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-500">ETFs</span>
+<span class="text-gray-900">$118,388.00</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-500">Bonds</span>
+<span class="text-gray-900">$449,320.35</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-500">Cash</span>
+<span class="text-gray-900">$54,892.35</span>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl p-6 border border-gray-200">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-medium text-gray-600">Total Return</h3>
+<div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-lg">
+<i class="ri-arrow-up-line text-blue-600"></i>
+</div>
+</div>
+<div class="text-2xl font-bold text-gray-900 mb-3">$127,843.20</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[rgba(87,181,231,1)]"></div>
+<span class="text-sm text-gray-600">Stocks</span>
+</div>
+<div class="text-sm">
+<span class="font-medium text-gray-900">$58,234.50</span>
+<span class="text-green-600 ml-2">+24.5%</span>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[rgba(141,211,199,1)]"></div>
+<span class="text-sm text-gray-600">ETFs</span>
+</div>
+<div class="text-sm">
+<span class="font-medium text-gray-900">$32,456.80</span>
+<span class="text-green-600 ml-2">+15.8%</span>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[rgba(251,191,114,1)]"></div>
+<span class="text-sm text-gray-600">Bonds</span>
+</div>
+<div class="text-sm">
+<span class="font-medium text-gray-900">$28,890.45</span>
+<span class="text-green-600 ml-2">+12.3%</span>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-[rgba(252,141,98,1)]"></div>
+<span class="text-sm text-gray-600">Cash</span>
+</div>
+<div class="text-sm">
+<span class="font-medium text-gray-900">$8,261.45</span>
+<span class="text-green-600 ml-2">+3.2%</span>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl p-6 border border-gray-200">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-medium text-gray-600">Day's Change</h3>
+<div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-lg">
+<i class="ri-calendar-line text-orange-600"></i>
+</div>
+</div>
+<div class="text-2xl font-bold text-gray-900 mb-1">+$3,247.85</div>
+<div class="flex items-center text-sm">
+<span class="text-green-600 font-medium">+0.38%</span>
+<span class="text-gray-500 ml-1">today</span>
+</div>
+</div>
+<div class="bg-white rounded-xl p-6 border border-gray-200">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-medium text-gray-600">Cash</h3>
+<div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg">
+<i class="ri-money-dollar-circle-line text-green-600"></i>
+</div>
+</div>
+<div class="text-2xl font-bold text-gray-900 mb-1" id="cashValue">$54,892.35</div>
+<div class="flex items-center justify-between">
+<span class="text-gray-500 text-sm">Available for investment</span>
+<button id="manageCashBtn" class="text-primary hover:text-primary/80 text-sm font-medium">
+<i class="ri-add-circle-line mr-1"></i>Manage Cash
+</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+<div class="lg:col-span-2 bg-white rounded-xl p-6 border border-gray-200">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-bold text-gray-900">Portfolio Performance</h2>
+<div class="flex space-x-2">
+<button class="px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-button">1D</button>
+<button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1W</button>
+<button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1M</button>
+<button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">3M</button>
+<button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1Y</button>
+<button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">ALL</button>
+</div>
+</div>
+<div id="portfolioChart" style="height: 300px;"></div>
+</div>
+<div class="bg-white rounded-xl p-6 border border-gray-200">
+<h2 class="text-xl font-bold text-gray-900 mb-6">Asset Allocation</h2>
+<div id="allocationChart" style="height: 300px;"></div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-gray-200">
+<div class="p-6 border-b border-gray-200">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-xl font-bold text-gray-900">Portfolio Holdings</h2>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+<input type="text" placeholder="Search assets..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+</div>
+<button id="addAssetBtn" class="bg-primary text-white px-4 py-2 rounded-button font-medium whitespace-nowrap !rounded-button">
+<i class="ri-add-line mr-2"></i>Add Asset
+</button>
+</div>
+</div>
+<div class="flex space-x-2">
+<button class="category-btn px-4 py-2 text-sm font-medium text-primary bg-primary/10 rounded-button whitespace-nowrap">
+All Assets
+</button>
+<button class="category-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-primary rounded-button whitespace-nowrap">
+Stocks
+</button>
+<button class="category-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-primary rounded-button whitespace-nowrap">
+ETFs
+</button>
+<button class="category-btn px-4 py-2 text-sm font-medium text-gray-600 hover:text-primary rounded-button whitespace-nowrap">
+Bonds
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full">
+<thead class="bg-gray-50">
+<tr>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Price</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Price</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Value</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Performance</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+</tr>
+</thead>
+<tbody class="bg-white divide-y divide-gray-200">
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-lg mr-3">
+<i class="ri-stock-line text-blue-600 text-sm"></i>
+</div>
+<div>
+<div class="text-sm font-medium text-gray-900">Apple Inc.</div>
+<div class="text-sm text-gray-500">AAPL</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">150</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$142.50</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$189.25</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$28,387.50</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
++32.81%
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+<button class="text-primary hover:text-primary/80">Edit</button>
+<button class="text-red-600 hover:text-red-800">Remove</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center bg-indigo-100 rounded-lg mr-3">
+<i class="ri-funds-line text-indigo-600 text-sm"></i>
+</div>
+<div>
+<div class="text-sm font-medium text-gray-900">Vanguard Total Bond ETF</div>
+<div class="text-sm text-gray-500">BND</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">300</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$72.45</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$73.80</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$22,140.00</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
++1.86%
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+<button class="text-primary hover:text-primary/80">Edit</button>
+<button class="text-red-600 hover:text-red-800">Remove</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-lg mr-3">
+<i class="ri-funds-line text-orange-600 text-sm"></i>
+</div>
+<div>
+<div class="text-sm font-medium text-gray-900">iShares Core U.S. Aggregate Bond</div>
+<div class="text-sm text-gray-500">AGG</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">250</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$98.35</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$99.75</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$24,937.50</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
++1.42%
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+<button class="text-primary hover:text-primary/80">Edit</button>
+<button class="text-red-600 hover:text-red-800">Remove</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg mr-3">
+<i class="ri-stock-line text-green-600 text-sm"></i>
+</div>
+<div>
+<div class="text-sm font-medium text-gray-900">Microsoft Corp.</div>
+<div class="text-sm text-gray-500">MSFT</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">85</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$298.75</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$342.18</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$29,085.30</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
++14.53%
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+<button class="text-primary hover:text-primary/80">Edit</button>
+<button class="text-red-600 hover:text-red-800">Remove</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center bg-purple-100 rounded-lg mr-3">
+<i class="ri-stock-line text-purple-600 text-sm"></i>
+</div>
+<div>
+<div class="text-sm font-medium text-gray-900">Amazon.com Inc.</div>
+<div class="text-sm text-gray-500">AMZN</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">45</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$3,245.60</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$3,387.45</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$152,435.25</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
++4.37%
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+<button class="text-primary hover:text-primary/80">Edit</button>
+<button class="text-red-600 hover:text-red-800">Remove</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center bg-purple-100 rounded-lg mr-3">
+<i class="ri-funds-line text-purple-600 text-sm"></i>
+</div>
+<div>
+<div class="text-sm font-medium text-gray-900">Vanguard Growth ETF</div>
+<div class="text-sm text-gray-500">VUG</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">120</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$285.40</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$298.65</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$35,838.00</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
++4.64%
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+<button class="text-primary hover:text-primary/80">Edit</button>
+<button class="text-red-600 hover:text-red-800">Remove</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center bg-yellow-100 rounded-lg mr-3">
+<i class="ri-money-dollar-circle-line text-yellow-600 text-sm"></i>
+</div>
+<div>
+<div class="text-sm font-medium text-gray-900">SPDR S&P 500 ETF</div>
+<div class="text-sm text-gray-500">SPY</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">200</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$385.20</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$412.75</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$82,550.00</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
++7.15%
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+<button class="text-primary hover:text-primary/80">Edit</button>
+<button class="text-red-600 hover:text-red-800">Remove</button>
+</td>
+</tr>
+<tr>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-lg mr-3">
+<i class="ri-stock-line text-red-600 text-sm"></i>
+</div>
+<div>
+<div class="text-sm font-medium text-gray-900">Tesla Inc.</div>
+<div class="text-sm text-gray-500">TSLA</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">75</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$245.80</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$198.45</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$14,883.75</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+-19.27%
+</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+<button class="text-primary hover:text-primary/80">Edit</button>
+<button class="text-red-600 hover:text-red-800">Remove</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="mt-8 flex justify-center space-x-4">
+<button class="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
+<i class="ri-download-line mr-2"></i>Export Data
+</button>
+<button class="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
+<i class="ri-file-text-line mr-2"></i>Generate Report
+</button>
+<button class="bg-primary text-white px-6 py-3 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
+<i class="ri-refresh-line mr-2"></i>Rebalance Portfolio
+</button>
+</div>
+</main>
+<div id="manageCashModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+<div class="flex items-center justify-center min-h-screen p-4">
+<div class="bg-white rounded-xl max-w-md w-full p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-lg font-bold text-gray-900">Manage Cash</h3>
+<button class="closeCashModal w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-close-line"></i>
+</button>
+</div>
+<form id="manageCashForm" class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Transaction Type</label>
+<div class="flex space-x-4 mb-4">
+<button type="button" id="depositBtn" class="flex-1 py-2 px-4 rounded-button border text-sm font-medium bg-primary text-white">Deposit</button>
+<button type="button" id="withdrawBtn" class="flex-1 py-2 px-4 rounded-button border text-sm font-medium text-gray-700">Withdraw</button>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+<input type="number" id="cashAmount" min="0" step="0.01" placeholder="Enter amount" class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+</div>
+</div>
+<div class="flex space-x-3 pt-4">
+<button type="button" class="closeCashModal flex-1 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
+Cancel
+</button>
+<button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
+Confirm
+</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<div id="addAssetModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+<div class="flex items-center justify-center min-h-screen p-4">
+<div class="bg-white rounded-xl max-w-md w-full p-6">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-lg font-bold text-gray-900">Add New Asset</h3>
+<button id="closeModal" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-close-line"></i>
+</button>
+</div>
+<form class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Asset Type</label>
+<div class="relative">
+<button type="button" class="w-full px-3 py-2 border border-gray-300 rounded-button text-left text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary pr-8">
+Select asset type
+<i class="ri-arrow-down-s-line absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+</button>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Asset Symbol</label>
+<input type="text" placeholder="e.g., AAPL" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+<input type="number" placeholder="Enter quantity" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Purchase Price</label>
+<input type="number" step="0.01" placeholder="Enter purchase price" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-2">Purchase Date</label>
+<input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+</div>
+<div class="flex space-x-3 pt-4">
+<button type="button" id="cancelBtn" class="flex-1 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
+Cancel
+</button>
+<button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
+Add Asset
+</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+<script id="chartInit">
+document.addEventListener('DOMContentLoaded', function() {
+const portfolioChart = echarts.init(document.getElementById('portfolioChart'));
+const allocationChart = echarts.init(document.getElementById('allocationChart'));
+const portfolioOption = {
+animation: false,
+grid: {
+left: 0,
+right: 0,
+top: 40,
+bottom: 0,
+containLabel: true
+},
+legend: {
+top: 0,
+data: ['Total Portfolio Value', 'Stocks', 'ETFs', 'Bonds', 'Cash'],
+textStyle: { color: '#1f2937' }
+},
+xAxis: {
+type: 'category',
+data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+axisLine: { show: false },
+axisTick: { show: false },
+axisLabel: { color: '#6b7280' }
+},
+yAxis: {
+type: 'value',
+axisLine: { show: false },
+axisTick: { show: false },
+axisLabel: { color: '#6b7280' },
+splitLine: { lineStyle: { color: '#f3f4f6' } }
+},
+series: [
+{
+name: 'Total Portfolio Value',
+data: [720000, 740000, 750000, 771000, 790000, 809000, 828000, 846500, 865000, 880800, 890900, 897284],
+type: 'line',
+smooth: true,
+symbol: 'none',
+lineStyle: { color: '#1e40af', width: 3 },
+z: 5
+},
+{
+name: 'Stocks',
+data: [320000, 335000, 342000, 358000, 371000, 385000, 398000, 412000, 425000, 438000, 445000, 447392],
+type: 'line',
+smooth: true,
+symbol: 'none',
+lineStyle: { color: 'rgba(87, 181, 231, 1)', width: 2 }
+},
+{
+name: 'ETFs',
+data: [180000, 185000, 188000, 192000, 195000, 198000, 201000, 205000, 208000, 210000, 212000, 215000],
+type: 'line',
+smooth: true,
+symbol: 'none',
+lineStyle: { color: 'rgba(141, 211, 199, 1)', width: 2 }
+},
+{
+name: 'Bonds',
+data: [165000, 167000, 168000, 170000, 172000, 173000, 175000, 176000, 177000, 178000, 179000, 180000],
+type: 'line',
+smooth: true,
+symbol: 'none',
+lineStyle: { color: 'rgba(251, 191, 114, 1)', width: 2 }
+},
+{
+name: 'Cash',
+data: [55000, 53000, 52000, 51000, 52000, 53000, 54000, 53500, 54500, 54800, 54900, 54892],
+type: 'line',
+smooth: true,
+symbol: 'none',
+lineStyle: { color: 'rgba(252, 141, 98, 1)', width: 2 }
+}
+],
+tooltip: {
+trigger: 'axis',
+backgroundColor: 'rgba(255, 255, 255, 0.95)',
+borderColor: '#e5e7eb',
+textStyle: { color: '#1f2937' }
+}
+};
+const allocationOption = {
+animation: false,
+series: [{
+type: 'pie',
+radius: ['40%', '70%'],
+center: ['50%', '50%'],
+data: [
+{ value: 35, name: 'Stocks', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
+{ value: 25, name: 'ETFs', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
+{ value: 20, name: 'Bonds', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
+{ value: 20, name: 'Cash', itemStyle: { color: 'rgba(252, 141, 98, 1)' } }
+],
+label: { color: '#1f2937', fontSize: 12 },
+itemStyle: { borderRadius: 4 }
+}],
+tooltip: {
+trigger: 'item',
+backgroundColor: 'rgba(255, 255, 255, 0.95)',
+borderColor: '#e5e7eb',
+textStyle: { color: '#1f2937' }
+}
+};
+portfolioChart.setOption(portfolioOption);
+allocationChart.setOption(allocationOption);
+window.addEventListener('resize', function() {
+portfolioChart.resize();
+allocationChart.resize();
+});
+});
+</script>
+<script id="modalControls">
+document.addEventListener('DOMContentLoaded', function() {
+const addAssetBtn = document.getElementById('addAssetBtn');
+const modal = document.getElementById('addAssetModal');
+const closeModal = document.getElementById('closeModal');
+const cancelBtn = document.getElementById('cancelBtn');
+const manageCashBtn = document.getElementById('manageCashBtn');
+const cashModal = document.getElementById('manageCashModal');
+const closeCashBtns = document.querySelectorAll('.closeCashModal');
+const depositBtn = document.getElementById('depositBtn');
+const withdrawBtn = document.getElementById('withdrawBtn');
+const manageCashForm = document.getElementById('manageCashForm');
+const cashAmountInput = document.getElementById('cashAmount');
+let transactionType = 'deposit';
+let currentCash = 54892.35;
+const cashValueElement = document.getElementById('cashValue');
+manageCashBtn.addEventListener('click', function() {
+cashModal.classList.remove('hidden');
+});
+closeCashBtns.forEach(btn => {
+btn.addEventListener('click', function() {
+cashModal.classList.add('hidden');
+resetCashForm();
+});
+});
+cashModal.addEventListener('click', function(e) {
+if (e.target === cashModal) {
+cashModal.classList.add('hidden');
+resetCashForm();
+}
+});
+depositBtn.addEventListener('click', function() {
+transactionType = 'deposit';
+depositBtn.classList.add('bg-primary', 'text-white');
+depositBtn.classList.remove('text-gray-700');
+withdrawBtn.classList.remove('bg-primary', 'text-white');
+withdrawBtn.classList.add('text-gray-700');
+});
+withdrawBtn.addEventListener('click', function() {
+transactionType = 'withdraw';
+withdrawBtn.classList.add('bg-primary', 'text-white');
+withdrawBtn.classList.remove('text-gray-700');
+depositBtn.classList.remove('bg-primary', 'text-white');
+depositBtn.classList.add('text-gray-700');
+});
+manageCashForm.addEventListener('submit', function(e) {
+e.preventDefault();
+const amount = parseFloat(cashAmountInput.value);
+if (isNaN(amount) || amount <= 0) {
+cashAmountInput.classList.add('border-red-500');
+return;
+}
+if (transactionType === 'withdraw' && amount > currentCash) {
+cashAmountInput.classList.add('border-red-500');
+return;
+}
+currentCash = transactionType === 'deposit' ?
+currentCash + amount :
+currentCash - amount;
+cashValueElement.textContent = `$${currentCash.toFixed(2)}`;
+updateCashInChart();
+cashModal.classList.add('hidden');
+resetCashForm();
+});
+function resetCashForm() {
+cashAmountInput.value = '';
+cashAmountInput.classList.remove('border-red-500');
+transactionType = 'deposit';
+depositBtn.classList.add('bg-primary', 'text-white');
+depositBtn.classList.remove('text-gray-700');
+withdrawBtn.classList.remove('bg-primary', 'text-white');
+withdrawBtn.classList.add('text-gray-700');
+}
+function updateCashInChart() {
+const portfolioChart = echarts.getInstanceByDom(document.getElementById('portfolioChart'));
+const option = portfolioChart.getOption();
+const lastCashValue = option.series[4].data[option.series[4].data.length - 1];
+option.series[4].data[option.series[4].data.length - 1] = currentCash;
+option.series[0].data[option.series[0].data.length - 1] =
+option.series[0].data[option.series[0].data.length - 1] - lastCashValue + currentCash;
+portfolioChart.setOption(option);
+}
+addAssetBtn.addEventListener('click', function() {
+modal.classList.remove('hidden');
+});
+closeModal.addEventListener('click', function() {
+modal.classList.add('hidden');
+});
+cancelBtn.addEventListener('click', function() {
+modal.classList.add('hidden');
+});
+modal.addEventListener('click', function(e) {
+if (e.target === modal) {
+modal.classList.add('hidden');
+}
+});
+});
+</script>
+<script id="timeRangeButtons">
+document.addEventListener('DOMContentLoaded', function() {
+const timeButtons = document.querySelectorAll('.lg\\:col-span-2 button');
+timeButtons.forEach(button => {
+button.addEventListener('click', function() {
+timeButtons.forEach(btn => {
+btn.classList.remove('text-primary', 'bg-primary/10');
+btn.classList.add('text-gray-600');
+});
+this.classList.remove('text-gray-600');
+this.classList.add('text-primary', 'bg-primary/10');
+});
+});
+const categoryButtons = document.querySelectorAll('.category-btn');
+const rows = document.querySelectorAll('tbody tr');
+categoryButtons.forEach(button => {
+button.addEventListener('click', function() {
+categoryButtons.forEach(btn => {
+btn.classList.remove('text-primary', 'bg-primary/10');
+btn.classList.add('text-gray-600');
+});
+this.classList.remove('text-gray-600');
+this.classList.add('text-primary', 'bg-primary/10');
+const category = this.textContent.trim();
+rows.forEach(row => {
+const assetType = row.querySelector('.ri-stock-line, .ri-funds-line, .ri-money-dollar-circle-line')?.classList[0];
+if (category === 'All Assets') {
+row.style.display = '';
+} else if (category === 'Stocks' && assetType === 'ri-stock-line') {
+row.style.display = '';
+} else if (category === 'ETFs' && assetType === 'ri-funds-line') {
+row.style.display = '';
+} else if (category === 'Bonds' && assetType === 'ri-money-dollar-circle-line') {
+row.style.display = '';
+} else {
+row.style.display = 'none';
+}
+});
+});
+});
+});
+</script>
+</body>
+</html>
