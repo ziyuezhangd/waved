@@ -1,0 +1,23 @@
+{
+  "name": "waved",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "1. View Portfolio Items",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ziyuezhangd/waved.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ziyuezhangd/waved/issues"
+  },
+  "homepage": "https://github.com/ziyuezhangd/waved#readme",
+  "dependencies": {
+    "jest": "^30.0.5"
+  }
+}
