@@ -231,7 +231,26 @@
     </td>
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">150</td>
     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$142.50</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$189.25</td>
+    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="stock-price">$0.00</td>
+    <script>
+        async function loadStockPrice(symbol) {
+          try {
+            const res = await fetch(`/api/stock/${symbol}`);
+            const data = await res.json();
+            if (data.price) {
+              document.getElementById('stock-price').textContent = `$${data.price.toFixed(2)}`;
+            } else {
+              document.getElementById('stock-price').textContent = 'N/A';
+            }
+          } catch (e) {
+            console.error(e);
+            document.getElementById('stock-price').textContent = 'Error';
+          }
+        }
+      
+        // 页面加载时请求AAPL价格
+        loadStockPrice('AAPL');
+      </script>
     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$28,387.50</td>
     <td class="px-6 py-4 whitespace-nowrap">
     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
