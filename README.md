@@ -1,4 +1,4 @@
-# waved
+# wavedo
 
 ## Functionalities
 1. View Portfolio Items
