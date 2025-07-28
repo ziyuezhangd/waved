@@ -58,7 +58,7 @@ Before running the application, ensure you have the following installed:
     $
 2.**Run the Application**
 
-    $npm start
+    $ npm start
 3.**Access the Application**
     Open the Browser and go to:
 
