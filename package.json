@@ -1,23 +1,25 @@
 {
-  "name": "waved",
+  "name": "wavedo",
   "version": "1.0.0",
   "type": "module",
-  "description": "1. View Portfolio Items",
+  "description": "Portfolio management application",
   "main": "index.js",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ziyuezhangd/waved.git"
+    "url": "git+https://github.com/ziyuezhangd/wavedo.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ziyuezhangd/waved/issues"
+    "url": "https://github.com/ziyuezhangd/wavedo/issues"
   },
-  "homepage": "https://github.com/ziyuezhangd/waved#readme",
+  "homepage": "https://github.com/ziyuezhangd/wavedo#readme",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
     "jest": "^30.0.5"
   }
 }
