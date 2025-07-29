@@ -160,9 +160,6 @@
     <button class="px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-button">1D</button>
     <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1W</button>
     <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1M</button>
-    <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">3M</button>
-    <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1Y</button>
-    <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">ALL</button>
     </div>
     </div>
     <div id="portfolioChart" style="height: 300px;"></div>
@@ -547,6 +544,27 @@
     document.addEventListener('DOMContentLoaded', function() {
     const portfolioChart = echarts.init(document.getElementById('portfolioChart'));
     const allocationChart = echarts.init(document.getElementById('allocationChart'));
+
+    //Initial chart options
+    let currentView = '1D';
+
+    async function fetchChartData(range) {
+      const res = await fetch(`/api/portfolio/${range}`);
+      return await res.json();//{xAxis: [...], series: [[...], [...], ...]}
+    }
+
+    async function updatePortfolioChart(range) {
+      const data = await fetchChartData(range);
+      portfolioOption.xAxis.data = data.xAxis;
+      portfolioOption.series.forEach((series, index) => {
+        series.data = data.series[index];
+      });
+      portfolioChart.setOption(portfolioOption);
+    }
+
+    //Initial load
+    updatePortfolioChart(currentView);
+
     const portfolioOption = {
     animation: false,
     grid: {
@@ -563,7 +581,7 @@
     },
     xAxis: {
     type: 'category',
-    data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    data: views[currentView].xAxis,
     axisLine: { show: false },
     axisTick: { show: false },
     axisLabel: { color: '#6b7280' }
@@ -578,7 +596,7 @@
     series: [
     {
     name: 'Total Portfolio Value',
-    data: [720000, 740000, 750000, 771000, 790000, 809000, 828000, 846500, 865000, 880800, 890900, 897284],
+    data: views[currentView].series[0],
     type: 'line',
     smooth: true,
     symbol: 'none',
@@ -587,7 +605,7 @@
     },
     {
     name: 'Stocks',
-    data: [320000, 335000, 342000, 358000, 371000, 385000, 398000, 412000, 425000, 438000, 445000, 447392],
+    data: views[currentView].series[1],
     type: 'line',
     smooth: true,
     symbol: 'none',
@@ -595,15 +613,15 @@
     },
     {
     name: 'ETFs',
-    data: [180000, 185000, 188000, 192000, 195000, 198000, 201000, 205000, 208000, 210000, 212000, 215000],
+    data: views[currentView].series[2],
     type: 'line',
     smooth: true,
     symbol: 'none',
-    lineStyle: { color: 'rgba(141, 211, 199, 1)', width: 2 }
+    lineStyle: { color: 'rgba(87, 181, 231, 1)', width: 2 }
     },
     {
     name: 'Bonds',
-    data: [165000, 167000, 168000, 170000, 172000, 173000, 175000, 176000, 177000, 178000, 179000, 180000],
+    data: views[currentView].series[3],
     type: 'line',
     smooth: true,
     symbol: 'none',
@@ -611,7 +629,7 @@
     },
     {
     name: 'Cash',
-    data: [55000, 53000, 52000, 51000, 52000, 53000, 54000, 53500, 54500, 54800, 54900, 54892],
+    data: views[currentView].series[4],
     type: 'line',
     smooth: true,
     symbol: 'none',
@@ -625,6 +643,23 @@
     textStyle: { color: '#1f2937' }
     }
     };
+
+    portfolioChart.setOption(portfolioOption);
+
+    //Update chart when time range buttons are clicked
+    const timeButtons = document.querySelectorAll('.lg\\:col-span-2 button');
+    timeButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+          const label = btn.textContent.trim();
+          if (['1D', '1W', '1M'].includes(label)) {
+            currentView = label;
+            updatePortfolioChart(label);
+          }
+        });
+      });
+
+
+    // Allocation chart 
     const allocationOption = {
     animation: false,
     series: [{
@@ -647,11 +682,10 @@
     textStyle: { color: '#1f2937' }
     }
     };
-    portfolioChart.setOption(portfolioOption);
-    allocationChart.setOption(allocationOption);
+
     window.addEventListener('resize', function() {
-    portfolioChart.resize();
-    allocationChart.resize();
+      portfolioChart.resize();
+      allocationChart.resize();
     });
     });
     </script>
