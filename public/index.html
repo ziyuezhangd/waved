@@ -557,7 +557,7 @@
     });
     });
     </script>
-    <script>
+    <script id="portfolioTableControls">
         // 加载投资组合表格数据
         // 获取资产实时价格
         async function loadStockPrice(symbol) {
@@ -612,66 +612,28 @@
                         </div>
                         <div>
                         <div class="text-sm font-medium text-gray-900">${item.asset_name}</div>
-                        <div class="text-sm text-gray-500">${item.asset_symbol}</div>
+                        <div class="text-sm text-gray-500 symbol">${item.asset_symbol}</div>
                         </div>
                         </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.quantity}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${item.price_per_unit}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="price-${item.asset_symbol}">$${currentPrice.toFixed(2)}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$${item.total_amount}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$${(currentPrice * item.quantity).toFixed(2)}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${badgeColor}-100 text-${badgeColor}-800">
                         ${changeText}
                         </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button class="text-primary hover:text-primary/80">Edit</button>
-                        <button class="text-red-600 hover:text-red-800">Remove</button>
+                        <button class="text-primary hover:text-primary/80 buy-btn">Buy</button>
+                        <button class="text-red-600 hover:text-red-800 sell-btn">Sell</button>
                         </td>
                     `;
 
                     tbody.appendChild(row);
                 }
 
-                // data.forEach((item) => {
-                //     const row = document.createElement("tr");
-                //     let color = "blue";
-                //     if (item.asset_type === "etf") {
-                //         color = "purple";
-                //     } else if (item.asset_type === "bond") {
-                //         color = "yellow";
-                //     }
-                //     row.innerHTML = `
-                //         <td class="px-6 py-4 whitespace-nowrap">
-                //         <div class="flex items-center">
-                //         <div class="w-8 h-8 flex items-center justify-center bg-${color}-100 rounded-lg mr-3">
-                //         <i class="ri-${item.asset_type}-line text-${color}-600 text-sm"></i>
-                //         </div>
-                //         <div>
-                //         <div class="text-sm font-medium text-gray-900">${item.asset_name}</div>
-                //         <div class="text-sm text-gray-500">${item.asset_symbol}</div>
-                //         </div>
-                //         </div>
-                //         </td>
-                //         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.quantity}</td>
-                //         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${item.price_per_unit}</td>
-                //         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="price-${item.asset_symbol}">N/A</td>
-                //         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$${item.total_amount}</td>
-                //         <td class="px-6 py-4 whitespace-nowrap">
-                //         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                //         -32.81%
-                //         </span>
-                //         </td>
-                //         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                //         <button class="text-primary hover:text-primary/80">Edit</button>
-                //         <button class="text-red-600 hover:text-red-800">Remove</button>
-                //         </td>
-                //     `;
-
-                //     tbody.appendChild(row);
-                //     loadStockPrice(item.asset_symbol); // 加载每个资产的实时价格
-                // });
             } catch(err) {
                 console.error("Failed to load portfolio", err);
             }
@@ -756,6 +718,81 @@
 
         window.addEventListener('DOMContentLoaded', updatePortfolioUI);
     </script>
-    
+    <script>
+        function createTradeModal() {
+            const modalHTML = `
+                <div id="trade-modal" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                    <h2 id="trade-title" class="text-xl font-semibold mb-4">Trade Asset</h2>
+                    <label class="block mb-2">Quantity:</label>
+                    <input id="trade-quantity" type="number" class="border p-2 w-full mb-3" />
+
+                    <label class="block mb-2">Price:</label>
+                    <input id="trade-price" type="number" class="border p-2 w-full mb-3" />
+
+                    <div class="flex justify-end space-x-3">
+                    <button id="cancel-trade" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+                    <button id="confirm-trade" class="px-4 py-2 bg-blue-500 text-white rounded">Confirm</button>
+                    </div>
+                </div>
+                </div>
+                `;
+            document.body.insertAdjacentHTML("beforeend", modalHTML);
+        }
+
+        // 页面加载完后插入弹窗
+        document.addEventListener("DOMContentLoaded", () => {
+            createTradeModal();
+            let currentTrade = { action: "", symbol: "" };
+
+            // 给 Buy/Sell 按钮绑定事件
+            document.addEventListener("click", (e) => {
+                if (e.target.classList.contains("buy-btn") || e.target.classList.contains("sell-btn")) {
+                    const isBuy = e.target.classList.contains("buy-btn");
+                    currentTrade.action = isBuy ? "buy" : "sell";
+                    // 获取当前行的 symbol
+                    const row = e.target.closest("tr");
+                    currentTrade.symbol = row.querySelector("td .symbol").textContent.trim();
+                    document.getElementById("trade-title").textContent = isBuy ? "Buy Asset" : "Sell Asset";
+                    document.getElementById("trade-quantity").value = "";
+                    document.getElementById("trade-price").value = "";
+                    document.getElementById("trade-modal").classList.remove("hidden");
+                    
+                }
+            });
+
+            // 绑定弹窗按钮事件
+            // Cancel关闭弹窗
+            document.getElementById("cancel-trade").addEventListener("click", () => {
+                document.getElementById("trade-modal").classList.add("hidden");
+            });
+            // Confirm确认交易
+            document.getElementById("confirm-trade").addEventListener("click", async () => {
+                const quantity = parseInt(document.getElementById("trade-quantity").value);
+                const price = parseFloat(document.getElementById("trade-price").value);
+
+                const payload = {
+                    symbol: currentTrade.symbol,
+                    action: currentTrade.action,
+                    quantity,
+                    price
+                };
+
+                try {
+                    // const res = await fetch("/api/trade", {
+                    //     method: "POST",
+                    //     headers: { "Content-Type": "application/json" },
+                    //     body: JSON.stringify({ symbol: currentTrade.symbol, quantity, price, type: currentTrade.type })
+                    // });
+                    // const result = await res.json();
+                    // console.log("Trade success:", result);
+                    console.log("Test");
+                } catch (err) {
+                    console.error("Trade failed:", err);
+                }
+                document.getElementById("trade-modal").classList.add("hidden");
+            });
+        });
+    </script>
 </body>
 </html>
