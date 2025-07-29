@@ -12,33 +12,10 @@ const mockAPortfolio = [
     {"asset_symbol": "TSLA","asset_name": "Tesla Inc.","asset_type": "stock","price_per_unit": 700.75,"quantity": 30,"total_amount": 21022.5},
     {"asset_symbol": "MSFT","asset_name": "Microsoft Corporation","asset_type": "stock","price_per_unit": 280.00,"quantity": 40,"total_amount": 11200},
     {"asset_symbol": "SPY", "asset_name": "SPDR S&P 500 ETF Trust","asset_type": "etf","price_per_unit": 450.00,"quantity": 20,"total_amount": 9000},
-    {"asset_symbol": "BND",
- "asset_name": "Vanguard Total Bond Market ETF",
- "asset_type": "etf","price_per_unit": 85.00,
-        "quantity": 100,
-        "total_amount": 8500
-    },
-    {"asset_symbol": "AGG",
-        "asset_name": "iShares Core U.S. Aggregate Bond ETF",
-        "asset_type": "etf",
-        "price_per_unit": 110.00,
-        "quantity": 50,
-        "total_amount": 5500
-    },
-    {"asset_symbol": "^IRX",
-        "asset_name": "CBOE Interest Rate 10 Year",
-        "asset_type": "bond",
-        "price_per_unit": 120.00,
-        "quantity": 25,
-        "total_amount": 3000
-    },
-    {"asset_symbol": "ZN=F",
-        "asset_name": "CBOT 10 Year T-Note",
-        "asset_type": "bond",
-        "price_per_unit": 130.00,
-        "quantity": 20,
-        "total_amount": 2600
-    }
+    {"asset_symbol": "BND","asset_name": "Vanguard Total Bond Market ETF","asset_type": "etf","price_per_unit": 85.00,"quantity": 100,"total_amount": 8500},
+    {"asset_symbol": "AGG","asset_name": "iShares Core U.S. Aggregate Bond ETF","asset_type": "etf","price_per_unit": 110.00,"quantity": 50,"total_amount": 5500},
+    {"asset_symbol": "^IRX","asset_name": "CBOE Interest Rate 10 Year","asset_type": "bond","price_per_unit": 120.00,"quantity": 25,"total_amount": 3000},
+    {"asset_symbol": "ZN=F","asset_name": "CBOT 10 Year T-Note","asset_type": "bond","price_per_unit": 130.00,"quantity": 20,"total_amount": 2600}
 ];
 
 
@@ -73,4 +50,14 @@ export const getSinglePortfolio = async (symbol) => {
     return asset;
 };
 
-export const addPortfolio = async (symbol, quantity, price, trade_time) => {};
+export const addPortfolio = async (symbol, quantity, price, trade_time) => {
+    console.log("Adding completed.");
+};
+
+export const deletePortfolio = async (symbol) => {
+    console.log("Deleting completed.");
+};
+
+export const updatePortfolio = async (symbol, quantity, price, trade_time) => {
+    console.log("Updating completed.");
+}
