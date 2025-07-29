@@ -420,7 +420,22 @@
                         radius: ['40%', '70%'],
                         center: ['50%', '50%'],
                         data,
-                        label: { color: '#1f2937', fontSize: 12 },
+                        label: {
+                            show: true,
+                            formatter: '{b}', // 显示 name
+                            fontSize: 12,
+                            color: '#1f2937',
+                            overflow: 'truncate', // 截断不要换行
+                            width: 80, // 给定宽度（可按需调整）
+                        },
+                        labelLine: {
+                            show: true,
+                            length: 15,
+                            length2: 10,
+                            lineStyle: {
+                                color: '#999'
+                            }
+                        },
                         itemStyle: { borderRadius: 4 }
                     }],
                     tooltip: {
