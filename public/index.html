@@ -634,8 +634,8 @@
     portfolioChart.setOption(portfolioOption);
 
 
-    async function fetchChartDate(range) {
-      const res = await fetch(`/api/stock/intraday${currrentSymbol}?range=${range}`);
+    async function fetchChartData(range) {
+      const res = await fetch(`/api/stock/intraday/${currrentSymbol}?range=${range}`);
       return await res.json(); // {xAxis: [...], series: [[...], [...], ...]}
       
     }
@@ -643,7 +643,14 @@
     async function updatePortfolioChart(range){
       try{
         const data = await fetchChartData(range);
+
+        if (!data || !data.xAxis || !data.series) {
+          console.error('Invalid data format:', data);
+          return;
+        }
+
         portfolioOption.xAxis.data = data.xAxis;
+
         if (data.series.length === 1) {
           portfolioOption.series[0].data = data.series[0];
         } else {
