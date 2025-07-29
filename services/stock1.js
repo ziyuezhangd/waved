@@ -23,4 +23,4 @@ export async function getIntradayData(symbol) {
     times: result.timestamp.map(ts => new Date(ts * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })),
     prices: result.indicators.quote[0].close,
   };
-};
+}
