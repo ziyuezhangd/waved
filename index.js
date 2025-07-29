@@ -6,8 +6,9 @@ import { pool } from './connectionPool.js'; // Import the connection pool
 
 // Note: The services/stock1.js and services/mockDB.js and their endpoints are kept as they were.
 import { getStockData } from './services/stock1.js';
-import { getAllAssets} from "./services/mockDB.js";
-import { mysqlConnection } from './mysql.js';
+import { getAllAssets, getAllPortfolio } from "./services/mockDB.js";
+import { mysqlConnection } from './mysql.js'; // Import the
+import yahooFinance from 'yahoo-finance2';
 import mysql from 'mysql2'; // Import mysql2
 
 // This is kept from your version, but is not used by the new endpoints
@@ -45,6 +46,16 @@ app.get('/api/allAsset', async (req, res) => {
   }
 });
 
+app.get('/api/portfolio', async (req, res) => {
+  try {
+    const portfolio = await getAllPortfolio();
+    res.json(portfolio);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch portfolio data' });
+  }
+});
+
+// retrieve stock data for multiple symbols
 app.post('/api/stocks', async (req, res) => {
   const symbols = req.body.symbols;
   if (!Array.isArray(symbols) || symbols.length === 0) {

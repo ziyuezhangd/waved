@@ -6,7 +6,7 @@ const mockAllAssets = {
 };
 const mockCash = 70000;
 const mockAllSymbols = ["AAPL", "AMZN", "TSLA", "MSFT", "SPY", "BND", "AGG", "^IRX", "ZN=F"];
-const mockAPortfolio = [
+const mockAllPortfolio = [
     {"asset_symbol": "AAPL","asset_name": "Apple Inc.","asset_type": "stock","price_per_unit": 150.25,"quantity": 100,"total_amount": 15025},
     {"asset_symbol": "AMZN","asset_name": "Amazon.com Inc.","asset_type": "stock","price_per_unit": 3200.50,"quantity": 50,"total_amount": 160025},
     {"asset_symbol": "TSLA","asset_name": "Tesla Inc.","asset_type": "stock","price_per_unit": 700.75,"quantity": 30,"total_amount": 21022.5},
@@ -37,13 +37,13 @@ export const getAllSymbols = async () => {
 // Returns data for all portfolio (fields: asset_symbol, asset_name, asset_type, price_per_unit, quantity, total_amount)
 // NOTE: 此处需要计算! 每个资产可能从数据库返回多条交易记录，需根据buy/sell计算总量、均价和总金额再返回
 export const getAllPortfolio = async () => {
-    return mockAPortfolio;
+    return mockAllPortfolio;
 };
 
 // Returns data for a single asset in portfolio (fields: asset_symbol, asset_name, asset_type, price_per_unit, quantity, total_amount)
 // NOTE: 此处需要计算! 每个资产可能从数据库返回多条交易记录，需根据buy/sell计算总量、均价和总金额再返回
 export const getSinglePortfolio = async (symbol) => {
-    const asset = mockAPortfolio.find(asset => asset.asset_symbol === symbol);
+    const asset = mockAllPortfolio.find(asset => asset.asset_symbol === symbol);
     if (!asset) {
         throw new Error(`Asset with symbol ${symbol} not found`);
     }

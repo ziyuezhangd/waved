@@ -25,9 +25,9 @@
     </div>
     </div>
     <div class="flex items-center space-x-4">
-    <button class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-primary">
+    <!-- <button class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-primary">
     <i class="ri-notification-line ri-lg"></i>
-    </button>
+    </button> -->
     <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
     <span class="text-white text-sm font-medium">U</span>
     </div>
@@ -140,7 +140,7 @@
     <div class="flex items-center justify-between mb-4">
     <h3 class="text-sm font-medium text-gray-600">Cash</h3>
     <div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg">
-    <i class="ri-money-dollar-circle-line text-green-600"></i>
+    <i class="ri-bond-line text-green-600"></i>
     </div>
     </div>
     <div class="text-2xl font-bold text-gray-900 mb-1" id="cashValue1">$54,892.35</div>
@@ -216,234 +216,7 @@
     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
     </tr>
     </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-lg mr-3">
-    <i class="ri-stock-line text-blue-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Apple Inc.</div>
-    <div class="text-sm text-gray-500">AAPL</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">150</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$142.50</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="stock-price">$0.00</td>
-    <script>
-        async function loadStockPrice(symbol) {
-          try {
-            const res = await fetch(`/api/stock/${symbol}`);
-            const data = await res.json();
-            if (data.price) {
-              document.getElementById('stock-price').textContent = `$${data.price.toFixed(2)}`;
-            } else {
-              document.getElementById('stock-price').textContent = 'N/A';
-            }
-          } catch (e) {
-            console.error(e);
-            document.getElementById('stock-price').textContent = 'Error';
-          }
-        }
-      
-        // 页面加载时请求AAPL价格
-        loadStockPrice('AAPL');
-      </script>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$28,387.50</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +32.81%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-indigo-100 rounded-lg mr-3">
-    <i class="ri-funds-line text-indigo-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Vanguard Total Bond ETF</div>
-    <div class="text-sm text-gray-500">BND</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">300</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$72.45</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$73.80</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$22,140.00</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +1.86%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-lg mr-3">
-    <i class="ri-funds-line text-orange-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">iShares Core U.S. Aggregate Bond</div>
-    <div class="text-sm text-gray-500">AGG</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">250</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$98.35</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$99.75</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$24,937.50</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +1.42%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg mr-3">
-    <i class="ri-stock-line text-green-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Microsoft Corp.</div>
-    <div class="text-sm text-gray-500">MSFT</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">85</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$298.75</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$342.18</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$29,085.30</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +14.53%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-purple-100 rounded-lg mr-3">
-    <i class="ri-stock-line text-purple-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Amazon.com Inc.</div>
-    <div class="text-sm text-gray-500">AMZN</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">45</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$3,245.60</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$3,387.45</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$152,435.25</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +4.37%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-purple-100 rounded-lg mr-3">
-    <i class="ri-funds-line text-purple-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Vanguard Growth ETF</div>
-    <div class="text-sm text-gray-500">VUG</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">120</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$285.40</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$298.65</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$35,838.00</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +4.64%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-yellow-100 rounded-lg mr-3">
-    <i class="ri-money-dollar-circle-line text-yellow-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">SPDR S&P 500 ETF</div>
-    <div class="text-sm text-gray-500">SPY</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">200</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$385.20</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$412.75</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$82,550.00</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +7.15%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-lg mr-3">
-    <i class="ri-stock-line text-red-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Tesla Inc.</div>
-    <div class="text-sm text-gray-500">TSLA</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">75</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$245.80</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$198.45</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$14,883.75</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-    -19.27%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
+    <tbody class="bg-white divide-y divide-gray-200" id="portfolio-body">
     </tbody>
     </table>
     </div>
@@ -545,114 +318,130 @@
     </div>
     <script id="chartInit">
     document.addEventListener('DOMContentLoaded', function() {
-    const portfolioChart = echarts.init(document.getElementById('portfolioChart'));
-    const allocationChart = echarts.init(document.getElementById('allocationChart'));
-    const portfolioOption = {
-    animation: false,
-    grid: {
-    left: 0,
-    right: 0,
-    top: 40,
-    bottom: 0,
-    containLabel: true
-    },
-    legend: {
-    top: 0,
-    data: ['Total Portfolio Value', 'Stocks', 'ETFs', 'Bonds', 'Cash'],
-    textStyle: { color: '#1f2937' }
-    },
-    xAxis: {
-    type: 'category',
-    data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    axisLine: { show: false },
-    axisTick: { show: false },
-    axisLabel: { color: '#6b7280' }
-    },
-    yAxis: {
-    type: 'value',
-    axisLine: { show: false },
-    axisTick: { show: false },
-    axisLabel: { color: '#6b7280' },
-    splitLine: { lineStyle: { color: '#f3f4f6' } }
-    },
-    series: [
-    {
-    name: 'Total Portfolio Value',
-    data: [720000, 740000, 750000, 771000, 790000, 809000, 828000, 846500, 865000, 880800, 890900, 897284],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: '#1e40af', width: 3 },
-    z: 5
-    },
-    {
-    name: 'Stocks',
-    data: [320000, 335000, 342000, 358000, 371000, 385000, 398000, 412000, 425000, 438000, 445000, 447392],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(87, 181, 231, 1)', width: 2 }
-    },
-    {
-    name: 'ETFs',
-    data: [180000, 185000, 188000, 192000, 195000, 198000, 201000, 205000, 208000, 210000, 212000, 215000],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(141, 211, 199, 1)', width: 2 }
-    },
-    {
-    name: 'Bonds',
-    data: [165000, 167000, 168000, 170000, 172000, 173000, 175000, 176000, 177000, 178000, 179000, 180000],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(251, 191, 114, 1)', width: 2 }
-    },
-    {
-    name: 'Cash',
-    data: [55000, 53000, 52000, 51000, 52000, 53000, 54000, 53500, 54500, 54800, 54900, 54892],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(252, 141, 98, 1)', width: 2 }
-    }
-    ],
-    tooltip: {
-    trigger: 'axis',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderColor: '#e5e7eb',
-    textStyle: { color: '#1f2937' }
-    }
-    };
-    const allocationOption = {
-    animation: false,
-    series: [{
-    type: 'pie',
-    radius: ['40%', '70%'],
-    center: ['50%', '50%'],
-    data: [
-    { value: 35, name: 'Stocks', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
-    { value: 25, name: 'ETFs', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
-    { value: 20, name: 'Bonds', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
-    { value: 20, name: 'Cash', itemStyle: { color: 'rgba(252, 141, 98, 1)' } }
-    ],
-    label: { color: '#1f2937', fontSize: 12 },
-    itemStyle: { borderRadius: 4 }
-    }],
-    tooltip: {
-    trigger: 'item',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderColor: '#e5e7eb',
-    textStyle: { color: '#1f2937' }
-    }
-    };
-    portfolioChart.setOption(portfolioOption);
-    allocationChart.setOption(allocationOption);
-    window.addEventListener('resize', function() {
-    portfolioChart.resize();
-    allocationChart.resize();
-    });
+        const portfolioChart = echarts.init(document.getElementById('portfolioChart'));
+        const portfolioOption = {
+            animation: false,
+            grid: {
+                left: 0,
+                right: 0,
+                top: 40,
+                bottom: 0,
+                containLabel: true
+            },
+            legend: {
+                top: 0,
+                data: ['Total Portfolio Value', 'Stocks', 'ETFs', 'Bonds', 'Cash'],
+                textStyle: { color: '#1f2937' }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                axisLine: { show: false },
+                axisTick: { show: false },
+                axisLabel: { color: '#6b7280' }
+            },
+            yAxis: {
+                type: 'value',
+                axisLine: { show: false },
+                axisTick: { show: false },
+                axisLabel: { color: '#6b7280' },
+                splitLine: { lineStyle: { color: '#f3f4f6' } }
+            },
+            series: [
+                {
+                    name: 'Total Portfolio Value',
+                    data: [720000, 740000, 750000, 771000, 790000, 809000, 828000, 846500, 865000, 880800, 890900, 897284],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: '#1e40af', width: 3 },
+                    z: 5
+                },
+                {
+                    name: 'Stocks',
+                    data: [320000, 335000, 342000, 358000, 371000, 385000, 398000, 412000, 425000, 438000, 445000, 447392],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: 'rgba(87, 181, 231, 1)', width: 2 }
+                },
+                {
+                    name: 'ETFs',
+                    data: [180000, 185000, 188000, 192000, 195000, 198000, 201000, 205000, 208000, 210000, 212000, 215000],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: 'rgba(141, 211, 199, 1)', width: 2 }
+                },
+                {
+                    name: 'Bonds',
+                    data: [165000, 167000, 168000, 170000, 172000, 173000, 175000, 176000, 177000, 178000, 179000, 180000],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: 'rgba(251, 191, 114, 1)', width: 2 }
+                },
+                {
+                    name: 'Cash',
+                    data: [55000, 53000, 52000, 51000, 52000, 53000, 54000, 53500, 54500, 54800, 54900, 54892],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: 'rgba(252, 141, 98, 1)', width: 2 }
+                }
+            ],
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                borderColor: '#e5e7eb',
+                textStyle: { color: '#1f2937' }
+            }
+        };
+        portfolioChart.setOption(portfolioOption);
+
+        // 动态获取资产分布数据并绘制饼图
+        async function drawAllocationChart() {
+            try {
+                const res = await fetch('/api/allAsset');
+                const { asset } = await res.json();
+
+                const data = [
+                    { value: asset.Stocks, name: 'Stocks', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
+                    { value: asset.ETFs, name: 'ETFs', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
+                    { value: asset.Bonds, name: 'Bonds', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
+                    { value: asset.Cash, name: 'Cash', itemStyle: { color: 'rgba(252, 141, 98, 1)' } },
+                ];
+
+                const allocationChart = echarts.init(document.getElementById('allocationChart'));
+                allocationChart.setOption({
+                    animation: false,
+                    series: [{
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        center: ['50%', '50%'],
+                        data,
+                        label: { color: '#1f2937', fontSize: 12 },
+                        itemStyle: { borderRadius: 4 }
+                    }],
+                    tooltip: {
+                        trigger: 'item',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        borderColor: '#e5e7eb',
+                        textStyle: { color: '#1f2937' }
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to draw allocation chart:', err);
+            }
+        }
+
+        drawAllocationChart();
+
+        window.addEventListener('resize', function() {
+            portfolioChart.resize();
+            const allocationChart = echarts.getInstanceByDom(document.getElementById('allocationChart'));
+            if (allocationChart) allocationChart.resize();
+        });
     });
     </script>
     <script id="modalControls">
@@ -753,49 +542,178 @@
     });
     });
     </script>
-    <script id="timeRangeButtons">
-    document.addEventListener('DOMContentLoaded', function() {
-    const timeButtons = document.querySelectorAll('.lg\\:col-span-2 button');
-    timeButtons.forEach(button => {
-    button.addEventListener('click', function() {
-    timeButtons.forEach(btn => {
-    btn.classList.remove('text-primary', 'bg-primary/10');
-    btn.classList.add('text-gray-600');
-    });
-    this.classList.remove('text-gray-600');
-    this.classList.add('text-primary', 'bg-primary/10');
-    });
-    });
-    const categoryButtons = document.querySelectorAll('.category-btn');
-    const rows = document.querySelectorAll('tbody tr');
-    categoryButtons.forEach(button => {
-    button.addEventListener('click', function() {
-    categoryButtons.forEach(btn => {
-    btn.classList.remove('text-primary', 'bg-primary/10');
-    btn.classList.add('text-gray-600');
-    });
-    this.classList.remove('text-gray-600');
-    this.classList.add('text-primary', 'bg-primary/10');
-    const category = this.textContent.trim();
-    rows.forEach(row => {
-    const assetType = row.querySelector('.ri-stock-line, .ri-funds-line, .ri-money-dollar-circle-line')?.classList[0];
-    if (category === 'All Assets') {
-    row.style.display = '';
-    } else if (category === 'Stocks' && assetType === 'ri-stock-line') {
-    row.style.display = '';
-    } else if (category === 'ETFs' && assetType === 'ri-funds-line') {
-    row.style.display = '';
-    } else if (category === 'Bonds' && assetType === 'ri-money-dollar-circle-line') {
-    row.style.display = '';
-    } else {
-    row.style.display = 'none';
-    }
-    });
-    });
-    });
-    });
+    <script>
+        // 加载投资组合表格数据
+        // 获取资产实时价格
+        async function loadStockPrice(symbol) {
+          try {
+            const res = await fetch(`/api/stock/${symbol}`);
+            const data = await res.json();
+            if (data.price) {
+              document.getElementById(`price-${symbol}`).textContent = `$${data.price.toFixed(2)}`;
+            } else {
+              document.getElementById(`price-${symbol}`).textContent = 'N/A';
+            }
+          } catch (e) {
+            console.error(e);
+            document.getElementById(`price-${symbol}`).textContent = 'Error';
+          }
+        };
+        async function loadPortfolioTable() {
+            try {
+                const response = await fetch('/api/portfolio');
+                const data = await response.json();
+                const tbody = document.getElementById("portfolio-body");
+                tbody.innerHTML = "";
+
+                for (const item of data) {
+                    // 获取实时价格
+                    const res = await fetch(`/api/stock/${item.asset_symbol}`);
+                    const stockData = await res.json();
+                    const currentPrice = stockData.price || item.price_per_unit;
+
+                    // 计算涨跌幅
+                    const changePercent = ((currentPrice - item.price_per_unit) / item.price_per_unit) * 100;
+                    const isPositive = changePercent >= 0;
+
+                    // 设置颜色
+                    const badgeColor = isPositive ? "green" : "red";
+                    const changeText = `${isPositive ? "+" : ""}${changePercent.toFixed(2)}%`;
+
+                    // 创建表格行
+                    const row = document.createElement("tr");
+                    let color = "blue";
+                    if (item.asset_type === "etf") {
+                        color = "purple";
+                    } else if (item.asset_type === "bond") {
+                        color = "yellow";
+                    }
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                        <div class="w-8 h-8 flex items-center justify-center bg-${color}-100 rounded-lg mr-3">
+                        <i class="ri-${item.asset_type}-line text-${color}-600 text-sm"></i>
+                        </div>
+                        <div>
+                        <div class="text-sm font-medium text-gray-900">${item.asset_name}</div>
+                        <div class="text-sm text-gray-500">${item.asset_symbol}</div>
+                        </div>
+                        </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.quantity}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${item.price_per_unit}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="price-${item.asset_symbol}">$${currentPrice.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$${item.total_amount}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${badgeColor}-100 text-${badgeColor}-800">
+                        ${changeText}
+                        </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <button class="text-primary hover:text-primary/80">Edit</button>
+                        <button class="text-red-600 hover:text-red-800">Remove</button>
+                        </td>
+                    `;
+
+                    tbody.appendChild(row);
+                }
+
+                // data.forEach((item) => {
+                //     const row = document.createElement("tr");
+                //     let color = "blue";
+                //     if (item.asset_type === "etf") {
+                //         color = "purple";
+                //     } else if (item.asset_type === "bond") {
+                //         color = "yellow";
+                //     }
+                //     row.innerHTML = `
+                //         <td class="px-6 py-4 whitespace-nowrap">
+                //         <div class="flex items-center">
+                //         <div class="w-8 h-8 flex items-center justify-center bg-${color}-100 rounded-lg mr-3">
+                //         <i class="ri-${item.asset_type}-line text-${color}-600 text-sm"></i>
+                //         </div>
+                //         <div>
+                //         <div class="text-sm font-medium text-gray-900">${item.asset_name}</div>
+                //         <div class="text-sm text-gray-500">${item.asset_symbol}</div>
+                //         </div>
+                //         </div>
+                //         </td>
+                //         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.quantity}</td>
+                //         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${item.price_per_unit}</td>
+                //         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="price-${item.asset_symbol}">N/A</td>
+                //         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$${item.total_amount}</td>
+                //         <td class="px-6 py-4 whitespace-nowrap">
+                //         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                //         -32.81%
+                //         </span>
+                //         </td>
+                //         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                //         <button class="text-primary hover:text-primary/80">Edit</button>
+                //         <button class="text-red-600 hover:text-red-800">Remove</button>
+                //         </td>
+                //     `;
+
+                //     tbody.appendChild(row);
+                //     loadStockPrice(item.asset_symbol); // 加载每个资产的实时价格
+                // });
+            } catch(err) {
+                console.error("Failed to load portfolio", err);
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            await loadPortfolioTable(); // 先加载表格
+
+            // 绑定时间按钮事件
+            const timeButtons = document.querySelectorAll('.lg\\:col-span-2 button');
+            timeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                timeButtons.forEach(btn => {
+                btn.classList.remove('text-primary', 'bg-primary/10');
+                btn.classList.add('text-gray-600');
+                });
+                this.classList.remove('text-gray-600');
+                this.classList.add('text-primary', 'bg-primary/10');
+                });
+            });
+
+            // 绑定资产类别按钮事件
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('text-primary', 'bg-primary/10');
+                        btn.classList.add('text-gray-600');
+                    });
+                    this.classList.remove('text-gray-600');
+                    this.classList.add('text-primary', 'bg-primary/10');
+
+                    const category = this.textContent.trim();
+                    const rows = document.querySelectorAll("tbody tr"); // 每次点击时重新获取行
+
+                    rows.forEach(row => {
+                        const icon = row.querySelector(".ri-stock-line, .ri-etf-line, .ri-bond-line");
+                        if (!icon) return;
+
+                        const isStock = icon.classList.contains("ri-stock-line");
+                        const isETF = icon.classList.contains("ri-etf-line");
+                        const isBond = icon.classList.contains("ri-bond-line");
+
+                        if (category === "All Assets" ||
+                            (category === "Stocks" && isStock) ||
+                            (category === "ETFs" && isETF) ||
+                            (category === "Bonds" && isBond)) {
+                            row.style.display = "";
+                        } else {
+                            row.style.display = "none";
+                        }
+                    });
+                });
+            });
+        });
     </script>
-    <script type="module">
+    <script>
         async function updatePortfolioUI() {
             try {
                 const res = await fetch('/api/allAsset');
@@ -823,5 +741,6 @@
 
         window.addEventListener('DOMContentLoaded', updatePortfolioUI);
     </script>
+    
 </body>
 </html>
