@@ -40,38 +40,39 @@
     <h1 class="text-3xl font-bold text-gray-900 mb-2">Portfolio Dashboard</h1>
     <p class="text-gray-600">Monitor and manage your investment portfolio</p>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <div class="bg-white rounded-xl p-6 border border-gray-200">
-    <div class="flex items-center justify-between mb-4">
-    <h3 class="text-sm font-medium text-gray-600">Total Portfolio Value</h3>
-    <div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg">
-    <i class="ri-line-chart-line text-green-600"></i>
-    </div>
-    </div>
-    <div class="text-2xl font-bold text-gray-900 mb-1">$847,392.50</div>
-    <div class="flex items-center text-sm mb-2">
-    <span class="text-green-600 font-medium">+2.34%</span>
-    <span class="text-gray-500 ml-1">from last month</span>
-    </div>
-    <div class="space-y-1.5">
-    <div class="flex justify-between text-sm">
-    <span class="text-gray-500">Stocks</span>
-    <span class="text-gray-900">$224,791.80</span>
-    </div>
-    <div class="flex justify-between text-sm">
-    <span class="text-gray-500">ETFs</span>
-    <span class="text-gray-900">$118,388.00</span>
-    </div>
-    <div class="flex justify-between text-sm">
-    <span class="text-gray-500">Bonds</span>
-    <span class="text-gray-900">$449,320.35</span>
-    </div>
-    <div class="flex justify-between text-sm">
-    <span class="text-gray-500">Cash</span>
-    <span class="text-gray-900">$54,892.35</span>
-    </div>
-    </div>
-    </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl p-6 border border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-medium text-gray-600">Total Portfolio Value</h3>
+                    <div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg">
+                        <i class="ri-line-chart-line text-green-600"></i>
+                    </div>
+                </div>
+                <div id="totalValue" class="text-2xl font-bold text-gray-900 mb-1">$0.00</div>
+                <div class="flex items-center text-sm mb-2">
+                    <span class="text-green-600 font-medium">+2.34%</span>
+                    <span class="text-gray-500 ml-1">from last month</span>
+                </div>
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Stocks</span>
+                        <span id="stocksValue" class="text-gray-900">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">ETFs</span>
+                        <span id="etfsValue" class="text-gray-900">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Bonds</span>
+                        <span id="bondsValue" class="text-gray-900">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Cash</span>
+                        <span id="cashValue" class="text-gray-900">$0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     <div class="bg-white rounded-xl p-6 border border-gray-200">
     <div class="flex items-center justify-between mb-4">
     <h3 class="text-sm font-medium text-gray-600">Total Return</h3>
@@ -143,7 +144,7 @@
     <i class="ri-money-dollar-circle-line text-green-600"></i>
     </div>
     </div>
-    <div class="text-2xl font-bold text-gray-900 mb-1" id="cashValue">$54,892.35</div>
+    <div class="text-2xl font-bold text-gray-900 mb-1" id="cashValue1">$54,892.35</div>
     <div class="flex items-center justify-between">
     <span class="text-gray-500 text-sm">Available for investment</span>
     <button id="manageCashBtn" class="text-primary hover:text-primary/80 text-sm font-medium">
@@ -794,6 +795,32 @@
     });
     });
     });
+    </script>
+    <script type="module">
+        import { getAllAssets } from '../services/mockDB.js';
+
+        async function updatePortfolioUI() {
+            const data = await getAllAssets();
+
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+            });
+
+            // 单项更新
+            document.getElementById('stocksValue').textContent = formatter.format(data.Stocks);
+            document.getElementById('etfsValue').textContent = formatter.format(data.ETFs);
+            document.getElementById('bondsValue').textContent = formatter.format(data.Bonds);
+            document.getElementById('cashValue').textContent = formatter.format(data.Cash);
+
+            // 总和计算并更新
+            const total =
+                data.Stocks + data.ETFs + data.Bonds + data.Cash;
+            document.getElementById('totalValue').textContent = formatter.format(total);
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('DOMContentLoaded', updatePortfolioUI);
     </script>
 </body>
 </html>
