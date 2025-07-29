@@ -72,7 +72,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     <div class="bg-white rounded-xl p-6 border border-gray-200">
     <div class="flex items-center justify-between mb-4">
     <h3 class="text-sm font-medium text-gray-600">Total Return</h3>
@@ -797,29 +796,31 @@
     });
     </script>
     <script type="module">
-        import { getAllAssets } from '../services/mockDB.js';
-
         async function updatePortfolioUI() {
-            const data = await getAllAssets();
+            try {
+                const res = await fetch('/api/allAsset');
+                const { asset } = await res.json(); // 确保后端返回的是 { asset: { Stocks, ETFs, Bonds, Cash } }
 
-            const formatter = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-            });
+                const formatter = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                });
 
-            // 单项更新
-            document.getElementById('stocksValue').textContent = formatter.format(data.Stocks);
-            document.getElementById('etfsValue').textContent = formatter.format(data.ETFs);
-            document.getElementById('bondsValue').textContent = formatter.format(data.Bonds);
-            document.getElementById('cashValue').textContent = formatter.format(data.Cash);
+                // 更新资产分类的数值
+                document.getElementById('stocksValue').textContent = formatter.format(asset.Stocks);
+                document.getElementById('etfsValue').textContent = formatter.format(asset.ETFs);
+                document.getElementById('bondsValue').textContent = formatter.format(asset.Bonds);
+                document.getElementById('cashValue').textContent = formatter.format(asset.Cash);
+                document.getElementById('cashValue1').textContent = formatter.format(asset.Cash);
 
-            // 总和计算并更新
-            const total =
-                data.Stocks + data.ETFs + data.Bonds + data.Cash;
-            document.getElementById('totalValue').textContent = formatter.format(total);
+                // 更新总资产
+                const total = asset.Stocks + asset.ETFs + asset.Bonds + asset.Cash;
+                document.getElementById('totalValue').textContent = formatter.format(total);
+            } catch (err) {
+                console.error('Failed to fetch asset data:', err);
+            }
         }
 
-        // 页面加载完成后执行
         window.addEventListener('DOMContentLoaded', updatePortfolioUI);
     </script>
 </body>
