@@ -2,12 +2,14 @@ import express from 'express';
 import path from 'path';
 import cors from 'cors';
 import { getStockData } from './services/stock1.js';
-
+import { mysqlConnection } from './mysql.js'; // Import the
+mysqlConnection();
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
 app.use(cors());
+
 
 // Access static files in public directory (HTML, CSS, JS files etc.)
 const __dirname = path.resolve();
@@ -24,4 +26,6 @@ app.get('/api/stock/:symbol', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
+
+
 
