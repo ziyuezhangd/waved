@@ -549,21 +549,6 @@
     let currentView = '1D';
     let currrentSymbol = 'AAPL';
 
-    async function fetchChartData(range) {
-      const res = await fetch(`/api/portfolio/${range}`);
-      return await res.json();//{xAxis: [...], series: [[...], [...], ...]}
-    }
-
-    async function updatePortfolioChart(range) {
-      const data = await fetchChartData(range);
-      portfolioOption.xAxis.data = data.xAxis;
-      portfolioOption.series.forEach((series, index) => {
-        series.data = data.series[index];
-      });
-      portfolioChart.setOption(portfolioOption);
-    }
-
-    
     //Initialize chart with empty data
 
     const portfolioOption = {
@@ -648,6 +633,7 @@
 
     portfolioChart.setOption(portfolioOption);
 
+
     async function fetchChartDate(range) {
       const res = await fetch(`/api/stock/intraday${currrentSymbol}?range=${range}`);
       return await res.json(); // {xAxis: [...], series: [[...], [...], ...]}
@@ -658,6 +644,13 @@
       try{
         const data = await fetchChartData(range);
         portfolioOption.xAxis.data = data.xAxis;
+        if (data.series.length === 1) {
+          portfolioOption.series[0].data = data.series[0];
+        } else {
+          portfolioOption.series.forEach((series, index) => {
+            series.data = data.series[index] || [];
+          });
+        }
         portfolioOption.setOption(portfolioOption);
       }catch(e) {
         console.error('Error fetching chart data:', e);
