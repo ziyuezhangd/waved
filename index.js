@@ -2,17 +2,14 @@ import express from 'express';
 import path from 'path';
 import cors from 'cors';
 import yahooFinance from 'yahoo-finance2';
-import { pool } from './connectionPool.js'; // Import the connection pool
+import { pool } from './connectionPool.js'; // The single source for DB connections
 
-// Note: The services/stock1.js and services/mockDB.js and their endpoints are kept as they were.
+// Note: The services/stock1.js and services/mockDB.js imports are kept as they were.
 import { getStockData } from './services/stock1.js';
 import { getAllAssets, getAllPortfolio } from "./services/mockDB.js";
-import { mysqlConnection } from './mysql.js'; // Import the
-import yahooFinance from 'yahoo-finance2';
-import mysql from 'mysql2'; // Import mysql2
-
-// This is kept from your version, but is not used by the new endpoints
-mysqlConnection(); 
+// Note: The direct import of mysql2 is no longer needed for endpoints, but db-test can use it for type info if needed.
+// We'll leave it for now as it doesn't harm anything.
+import mysql from 'mysql2'; 
 
 const app = express();
 const PORT = 3000;
@@ -26,7 +23,7 @@ const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// --- Existing API Endpoints (Unchanged) ---
+// --- API Endpoints ---
 
 app.get('/api/stock/:symbol', async (req, res) => {
   try {
@@ -55,7 +52,6 @@ app.get('/api/portfolio', async (req, res) => {
   }
 });
 
-// retrieve stock data for multiple symbols
 app.post('/api/stocks', async (req, res) => {
   const symbols = req.body.symbols;
   if (!Array.isArray(symbols) || symbols.length === 0) {
@@ -86,34 +82,31 @@ app.post('/api/stocks', async (req, res) => {
   }
 });
 
-app.get('/api/db-test', (req, res) => {
-  const connection = mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: 'n3u3da!',
-  });
-  connection.connect((err) => {
-    if (err) {
-      console.error('Error connecting to MySQL for test:', err);
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to connect to the database.',
-        error: err.code,
-      });
-    }
-    console.log('Database connection test was successful.');
+// --- Database Endpoints ---
+
+// Updated to use the connection pool for a more realistic test
+app.get('/api/db-test', async (req, res) => {
+  let connection;
+  try {
+    // Get a connection from the pool
+    connection = await pool.getConnection();
+    console.log('Database connection test was successful via pool.');
     res.json({
       success: true,
-      message: 'Successfully connected to the database.',
+      message: 'Successfully connected to the database via pool.',
     });
-    connection.end();
-  });
+  } catch (err) {
+    console.error('Error connecting to MySQL via pool:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to connect to the database via pool.',
+      error: err.code,
+    });
+  } finally {
+    // IMPORTANT: Always release the connection back to the pool
+    if (connection) connection.release();
+  }
 });
-
-
-// =====================================================================
-// == DATABASE ENDPOINTS (WITH FIX)
-// =====================================================================
 
 app.post('/api/generate-sample-data', async (req, res) => {
     let connection;
@@ -173,25 +166,16 @@ app.post('/api/generate-sample-data', async (req, res) => {
         );
         console.log("Generated dividend payment.");
         
-        // =====================================================================
-        // == THE FIX IS HERE: Manually building the query
-        // =====================================================================
         const dailySummaryData = [
             [new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().slice(0,10), 96580.00],
             [new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().slice(0,10), 98200.50],
             [new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString().slice(0,10), 99500.75]
         ];
         
-        // 1. Create a string of placeholders like '(?, ?), (?, ?), (?, ?)'
         const placeholders = dailySummaryData.map(() => '(?, ?)').join(', ');
-
-        // 2. Create the full SQL string
         const sql = `INSERT INTO daily_asset_summary (record_date, total_asset_value) VALUES ${placeholders}`;
-
-        // 3. Flatten the data array from [[a, b], [c, d]] to [a, b, c, d]
         const flatData = dailySummaryData.flat();
 
-        // 4. Execute the query. We can use .execute() again because the SQL is now standard.
         await connection.execute(sql, flatData);
         
         console.log("Inserted daily asset summaries.");
@@ -210,7 +194,6 @@ app.post('/api/generate-sample-data', async (req, res) => {
 });
 
 
-// --- Get All Trades ---
 app.get('/api/trades', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM `trades` ORDER BY `trade_time` DESC');
@@ -222,7 +205,6 @@ app.get('/api/trades', async (req, res) => {
 });
 
 
-// --- Get All Cash Flow ---
 app.get('/api/cash-flow', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM `cash_flow` ORDER BY `transaction_time` DESC');
@@ -234,7 +216,6 @@ app.get('/api/cash-flow', async (req, res) => {
 });
 
 
-// --- Get All Daily Asset Summaries ---
 app.get('/api/daily-summary', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM `daily_asset_summary` ORDER BY `record_date` DESC');
