@@ -318,114 +318,130 @@
     </div>
     <script id="chartInit">
     document.addEventListener('DOMContentLoaded', function() {
-    const portfolioChart = echarts.init(document.getElementById('portfolioChart'));
-    const allocationChart = echarts.init(document.getElementById('allocationChart'));
-    const portfolioOption = {
-    animation: false,
-    grid: {
-    left: 0,
-    right: 0,
-    top: 40,
-    bottom: 0,
-    containLabel: true
-    },
-    legend: {
-    top: 0,
-    data: ['Total Portfolio Value', 'Stocks', 'ETFs', 'Bonds', 'Cash'],
-    textStyle: { color: '#1f2937' }
-    },
-    xAxis: {
-    type: 'category',
-    data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    axisLine: { show: false },
-    axisTick: { show: false },
-    axisLabel: { color: '#6b7280' }
-    },
-    yAxis: {
-    type: 'value',
-    axisLine: { show: false },
-    axisTick: { show: false },
-    axisLabel: { color: '#6b7280' },
-    splitLine: { lineStyle: { color: '#f3f4f6' } }
-    },
-    series: [
-    {
-    name: 'Total Portfolio Value',
-    data: [720000, 740000, 750000, 771000, 790000, 809000, 828000, 846500, 865000, 880800, 890900, 897284],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: '#1e40af', width: 3 },
-    z: 5
-    },
-    {
-    name: 'Stocks',
-    data: [320000, 335000, 342000, 358000, 371000, 385000, 398000, 412000, 425000, 438000, 445000, 447392],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(87, 181, 231, 1)', width: 2 }
-    },
-    {
-    name: 'ETFs',
-    data: [180000, 185000, 188000, 192000, 195000, 198000, 201000, 205000, 208000, 210000, 212000, 215000],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(141, 211, 199, 1)', width: 2 }
-    },
-    {
-    name: 'Bonds',
-    data: [165000, 167000, 168000, 170000, 172000, 173000, 175000, 176000, 177000, 178000, 179000, 180000],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(251, 191, 114, 1)', width: 2 }
-    },
-    {
-    name: 'Cash',
-    data: [55000, 53000, 52000, 51000, 52000, 53000, 54000, 53500, 54500, 54800, 54900, 54892],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(252, 141, 98, 1)', width: 2 }
-    }
-    ],
-    tooltip: {
-    trigger: 'axis',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderColor: '#e5e7eb',
-    textStyle: { color: '#1f2937' }
-    }
-    };
-    const allocationOption = {
-    animation: false,
-    series: [{
-    type: 'pie',
-    radius: ['40%', '70%'],
-    center: ['50%', '50%'],
-    data: [
-    { value: 35, name: 'Stocks', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
-    { value: 25, name: 'ETFs', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
-    { value: 20, name: 'Bonds', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
-    { value: 20, name: 'Cash', itemStyle: { color: 'rgba(252, 141, 98, 1)' } }
-    ],
-    label: { color: '#1f2937', fontSize: 12 },
-    itemStyle: { borderRadius: 4 }
-    }],
-    tooltip: {
-    trigger: 'item',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderColor: '#e5e7eb',
-    textStyle: { color: '#1f2937' }
-    }
-    };
-    portfolioChart.setOption(portfolioOption);
-    allocationChart.setOption(allocationOption);
-    window.addEventListener('resize', function() {
-    portfolioChart.resize();
-    allocationChart.resize();
-    });
+        const portfolioChart = echarts.init(document.getElementById('portfolioChart'));
+        const portfolioOption = {
+            animation: false,
+            grid: {
+                left: 0,
+                right: 0,
+                top: 40,
+                bottom: 0,
+                containLabel: true
+            },
+            legend: {
+                top: 0,
+                data: ['Total Portfolio Value', 'Stocks', 'ETFs', 'Bonds', 'Cash'],
+                textStyle: { color: '#1f2937' }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                axisLine: { show: false },
+                axisTick: { show: false },
+                axisLabel: { color: '#6b7280' }
+            },
+            yAxis: {
+                type: 'value',
+                axisLine: { show: false },
+                axisTick: { show: false },
+                axisLabel: { color: '#6b7280' },
+                splitLine: { lineStyle: { color: '#f3f4f6' } }
+            },
+            series: [
+                {
+                    name: 'Total Portfolio Value',
+                    data: [720000, 740000, 750000, 771000, 790000, 809000, 828000, 846500, 865000, 880800, 890900, 897284],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: '#1e40af', width: 3 },
+                    z: 5
+                },
+                {
+                    name: 'Stocks',
+                    data: [320000, 335000, 342000, 358000, 371000, 385000, 398000, 412000, 425000, 438000, 445000, 447392],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: 'rgba(87, 181, 231, 1)', width: 2 }
+                },
+                {
+                    name: 'ETFs',
+                    data: [180000, 185000, 188000, 192000, 195000, 198000, 201000, 205000, 208000, 210000, 212000, 215000],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: 'rgba(141, 211, 199, 1)', width: 2 }
+                },
+                {
+                    name: 'Bonds',
+                    data: [165000, 167000, 168000, 170000, 172000, 173000, 175000, 176000, 177000, 178000, 179000, 180000],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: 'rgba(251, 191, 114, 1)', width: 2 }
+                },
+                {
+                    name: 'Cash',
+                    data: [55000, 53000, 52000, 51000, 52000, 53000, 54000, 53500, 54500, 54800, 54900, 54892],
+                    type: 'line',
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: 'rgba(252, 141, 98, 1)', width: 2 }
+                }
+            ],
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                borderColor: '#e5e7eb',
+                textStyle: { color: '#1f2937' }
+            }
+        };
+        portfolioChart.setOption(portfolioOption);
+
+        // 动态获取资产分布数据并绘制饼图
+        async function drawAllocationChart() {
+            try {
+                const res = await fetch('/api/allAsset');
+                const { asset } = await res.json();
+
+                const data = [
+                    { value: asset.Stocks, name: 'Stocks', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
+                    { value: asset.ETFs, name: 'ETFs', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
+                    { value: asset.Bonds, name: 'Bonds', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
+                    { value: asset.Cash, name: 'Cash', itemStyle: { color: 'rgba(252, 141, 98, 1)' } },
+                ];
+
+                const allocationChart = echarts.init(document.getElementById('allocationChart'));
+                allocationChart.setOption({
+                    animation: false,
+                    series: [{
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        center: ['50%', '50%'],
+                        data,
+                        label: { color: '#1f2937', fontSize: 12 },
+                        itemStyle: { borderRadius: 4 }
+                    }],
+                    tooltip: {
+                        trigger: 'item',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        borderColor: '#e5e7eb',
+                        textStyle: { color: '#1f2937' }
+                    }
+                });
+            } catch (err) {
+                console.error('Failed to draw allocation chart:', err);
+            }
+        }
+
+        drawAllocationChart();
+
+        window.addEventListener('resize', function() {
+            portfolioChart.resize();
+            const allocationChart = echarts.getInstanceByDom(document.getElementById('allocationChart'));
+            if (allocationChart) allocationChart.resize();
+        });
     });
     </script>
     <script id="modalControls">
