@@ -18,6 +18,7 @@ app.get('/api/stock/:symbol', async (req, res) => {
     const price = await getStockData(req.params.symbol);
     res.json({ price });
   } catch (err) {
+    console.error('Error in getStockData:', err); // Add this line
     res.status(500).json({ error: 'Failed to fetch stock data' });
   }
 });
