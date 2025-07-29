@@ -217,233 +217,6 @@
     </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200" id="portfolio-body">
-    <!-- <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-lg mr-3">
-    <i class="ri-stock-line text-blue-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Apple Inc.</div>
-    <div class="text-sm text-gray-500">AAPL</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">150</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$142.50</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="stock-price">$0.00</td>
-    <script>
-        async function loadStockPrice(symbol) {
-          try {
-            const res = await fetch(`/api/stock/${symbol}`);
-            const data = await res.json();
-            if (data.price) {
-              document.getElementById('stock-price').textContent = `$${data.price.toFixed(2)}`;
-            } else {
-              document.getElementById('stock-price').textContent = 'N/A';
-            }
-          } catch (e) {
-            console.error(e);
-            document.getElementById('stock-price').textContent = 'Error';
-          }
-        }
-      
-        // 页面加载时请求AAPL价格
-        loadStockPrice('AAPL');
-      </script>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$28,387.50</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +32.81%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-indigo-100 rounded-lg mr-3">
-    <i class="ri-funds-line text-indigo-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Vanguard Total Bond ETF</div>
-    <div class="text-sm text-gray-500">BND</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">300</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$72.45</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$73.80</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$22,140.00</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +1.86%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-lg mr-3">
-    <i class="ri-funds-line text-orange-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">iShares Core U.S. Aggregate Bond</div>
-    <div class="text-sm text-gray-500">AGG</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">250</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$98.35</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$99.75</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$24,937.50</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +1.42%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg mr-3">
-    <i class="ri-stock-line text-green-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Microsoft Corp.</div>
-    <div class="text-sm text-gray-500">MSFT</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">85</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$298.75</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$342.18</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$29,085.30</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +14.53%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-purple-100 rounded-lg mr-3">
-    <i class="ri-stock-line text-purple-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Amazon.com Inc.</div>
-    <div class="text-sm text-gray-500">AMZN</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">45</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$3,245.60</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$3,387.45</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$152,435.25</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +4.37%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-purple-100 rounded-lg mr-3">
-    <i class="ri-funds-line text-purple-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Vanguard Growth ETF</div>
-    <div class="text-sm text-gray-500">VUG</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">120</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$285.40</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$298.65</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$35,838.00</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +4.64%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-yellow-100 rounded-lg mr-3">
-    <i class="ri-money-dollar-circle-line text-yellow-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">SPDR S&P 500 ETF</div>
-    <div class="text-sm text-gray-500">SPY</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">200</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$385.20</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$412.75</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$82,550.00</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-    +7.15%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr>
-    <tr>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
-    <div class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-lg mr-3">
-    <i class="ri-stock-line text-red-600 text-sm"></i>
-    </div>
-    <div>
-    <div class="text-sm font-medium text-gray-900">Tesla Inc.</div>
-    <div class="text-sm text-gray-500">TSLA</div>
-    </div>
-    </div>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">75</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$245.80</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$198.45</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$14,883.75</td>
-    <td class="px-6 py-4 whitespace-nowrap">
-    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-    -19.27%
-    </span>
-    </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-    <button class="text-primary hover:text-primary/80">Edit</button>
-    <button class="text-red-600 hover:text-red-800">Remove</button>
-    </td>
-    </tr> -->
     </tbody>
     </table>
     </div>
@@ -755,6 +528,21 @@
     </script>
     <script>
         // 加载投资组合表格数据
+        // 先获取资产实时价格
+        async function loadStockPrice(symbol) {
+          try {
+            const res = await fetch(`/api/stock/${symbol}`);
+            const data = await res.json();
+            if (data.price) {
+              document.getElementById(`price-${symbol}`).textContent = `$${data.price.toFixed(2)}`;
+            } else {
+              document.getElementById(`price-${symbol}`).textContent = 'N/A';
+            }
+          } catch (e) {
+            console.error(e);
+            document.getElementById(`price-${symbol}`).textContent = 'Error';
+          }
+        };
         async function loadPortfolioTable() {
             try {
                 const response = await fetch('/api/portfolio');
@@ -786,7 +574,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.quantity}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${item.price_per_unit}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="price-${item.symbol}">N/A</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="price-${item.asset_symbol}">N/A</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$${item.total_amount}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -800,6 +588,7 @@
                     `;
 
                     tbody.appendChild(row);
+                    loadStockPrice(item.asset_symbol); // 加载每个资产的实时价格
                 });
             } catch(err) {
                 console.error("Failed to load portfolio", err);
