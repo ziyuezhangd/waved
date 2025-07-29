@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import cors from 'cors';
 import { getStockData } from './services/stock1.js';
+import { getAllPortfolio } from './services/mockDB.js';
 import { mysqlConnection } from './mysql.js'; // Import the
 mysqlConnection();
 const app = express();
@@ -22,6 +23,16 @@ app.get('/api/stock/:symbol', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch stock data' });
   }
 });
+
+app.get('/api/portfolio', async (req, res) => {
+  try {
+    const portfolio = await getAllPortfolio();
+    res.json(portfolio);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch portfolio data' });
+  }
+});
+
 // Start the Express server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
