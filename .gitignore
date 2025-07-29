@@ -141,3 +141,5 @@ vite.config.ts.timestamp-*
 
 # VS Code configuration files
 .vs/
+
+.DS_Store
