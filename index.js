@@ -25,19 +25,25 @@ app.get('/api/stock/:symbol', async (req, res) => {
 
 // Provide real intraday data
 app.get('/api/stock/intraday/:symbol', async (req, res) => {
-  const {range} = req.query;
-  if (range === '1D') {
-    try {
-      const { times, prices } = await getIntradayData(req.params.symbol);
-      res.json({ 
-        xAxis: times,
-        series: [prices]
-       });
-    }catch (err) {
-      res.status(500).json({ error: 'Failed to fetch intraday data' });
+  const { range } = req.query;
+  try {
+    let times, prices;
+    if (range === '1D') {
+      ({ times, prices } = await getIntradayData(req.params.symbol, '1d', '1m'));
+    } else if (range === '1W') {
+      ({ times, prices } = await getIntradayData(req.params.symbol, '5d', '5m'));
+    } else if (range === '1M') {
+      ({ times, prices } = await getIntradayData(req.params.symbol, '1mo', '1d'));
+    } else {
+      return res.status(400).json({ error: 'Invalid range.' });
     }
-  } else {
-    res.status(400).json({ error: 'Invalid range.'});
+    res.json({
+      xAxis: times,
+      series: [prices]
+    });
+  } catch (err) {
+    console.error('Error in getIntradayData:', err);
+    res.status(500).json({ error: 'Failed to fetch intraday data' });
   }
 });
 
