@@ -28,14 +28,9 @@ import yahooFinance from 'yahoo-finance2';
 }; */
 //temporarily mock
 export async function getIntradayData(symbol, period = '1d', interval = '1m') {
-  // Use yahooFinance2 _chart API
-  const result = await yahooFinance._chart(
-    symbol,
-    { period, interval }
-  );
   return {
-    times: result.timestamp.map(ts => new Date(ts * 1000).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: '2-digit', day: '2-digit' })),
-    prices: result.indicators.quote[0].close,
+    times: ['09:30', '09:31', '09:32'],
+    prices: [123.45, 123.55, 123.65]
   };
 }
 export async function getStockData(symbol) {
