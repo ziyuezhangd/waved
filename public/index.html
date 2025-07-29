@@ -612,7 +612,7 @@
                         </div>
                         <div>
                         <div class="text-sm font-medium text-gray-900">${item.asset_name}</div>
-                        <div class="text-sm text-gray-500">${item.asset_symbol}</div>
+                        <div class="text-sm text-gray-500 symbol">${item.asset_symbol}</div>
                         </div>
                         </div>
                         </td>
@@ -743,24 +743,53 @@
         // 页面加载完后插入弹窗
         document.addEventListener("DOMContentLoaded", () => {
             createTradeModal();
+            let currentTrade = { action: "", symbol: "" };
 
-            // 给 Buy / Sell 按钮绑定事件
+            // 给 Buy/Sell 按钮绑定事件
             document.addEventListener("click", (e) => {
                 if (e.target.classList.contains("buy-btn") || e.target.classList.contains("sell-btn")) {
-                const isBuy = e.target.classList.contains("buy-btn");
-                document.getElementById("trade-title").textContent = isBuy ? "Buy Asset" : "Sell Asset";
-                document.getElementById("trade-quantity").value = "";
-                document.getElementById("trade-price").value = "";
-                document.getElementById("trade-modal").classList.remove("hidden");
+                    const isBuy = e.target.classList.contains("buy-btn");
+                    currentTrade.action = isBuy ? "buy" : "sell";
+                    // 获取当前行的 symbol
+                    const row = e.target.closest("tr");
+                    currentTrade.symbol = row.querySelector("td .symbol").textContent.trim();
+                    document.getElementById("trade-title").textContent = isBuy ? "Buy Asset" : "Sell Asset";
+                    document.getElementById("trade-quantity").value = "";
+                    document.getElementById("trade-price").value = "";
+                    document.getElementById("trade-modal").classList.remove("hidden");
+                    
                 }
             });
 
             // 绑定弹窗按钮事件
+            // Cancel关闭弹窗
             document.getElementById("cancel-trade").addEventListener("click", () => {
                 document.getElementById("trade-modal").classList.add("hidden");
             });
+            // Confirm确认交易
+            document.getElementById("confirm-trade").addEventListener("click", async () => {
+                const quantity = parseInt(document.getElementById("trade-quantity").value);
+                const price = parseFloat(document.getElementById("trade-price").value);
 
-            document.getElementById("confirm-trade").addEventListener("click", () => {
+                const payload = {
+                    symbol: currentTrade.symbol,
+                    action: currentTrade.action,
+                    quantity,
+                    price
+                };
+
+                try {
+                    // const res = await fetch("/api/trade", {
+                    //     method: "POST",
+                    //     headers: { "Content-Type": "application/json" },
+                    //     body: JSON.stringify({ symbol: currentTrade.symbol, quantity, price, type: currentTrade.type })
+                    // });
+                    // const result = await res.json();
+                    // console.log("Trade success:", result);
+                    console.log("Test");
+                } catch (err) {
+                    console.error("Trade failed:", err);
+                }
                 document.getElementById("trade-modal").classList.add("hidden");
             });
         });
