@@ -5,6 +5,7 @@ import { getStockData } from './services/stock1.js';
 import { getAllAssets} from "./services/mockDB.js";
 import { mysqlConnection } from './mysql.js'; // Import the
 import yahooFinance from 'yahoo-finance2';
+import mysql from 'mysql2'; // Import mysql2
 mysqlConnection();
 const app = express();
 const PORT = 3000;
@@ -73,6 +74,38 @@ app.post('/api/stocks', async (req, res) => {
     console.error(err.message);
     res.status(500).json({ error: 'Server Error' });
   }
+});
+
+app.get('/api/db-test', (req, res) => {
+  // Create a new connection for the test
+  const connection = mysql.createConnection({
+    host: '127.0.0.1',
+    user: 'root',
+    password: 'n3u3da!',
+  });
+
+  // Attempt to connect to the database
+  connection.connect((err) => {
+    if (err) {
+      // If there's an error, log it and send a server error response
+      console.error('Error connecting to MySQL for test:', err);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to connect to the database.',
+        error: err.code, // Send back the error code (e.g., 'ECONNREFUSED')
+      });
+    }
+
+    // If the connection is successful, send a success response
+    console.log('Database connection test was successful.');
+    res.json({
+      success: true,
+      message: 'Successfully connected to the database.',
+    });
+
+    // Important: Close the connection after the test
+    connection.end();
+  });
 });
 
 // Start the Express server
