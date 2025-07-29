@@ -547,6 +547,7 @@
 
     //Initial chart options
     let currentView = '1D';
+    let currrentSymbol = 'AAPL';
 
     async function fetchChartData(range) {
       const res = await fetch(`/api/portfolio/${range}`);
@@ -562,8 +563,8 @@
       portfolioChart.setOption(portfolioOption);
     }
 
-    //Initial load
-    updatePortfolioChart(currentView);
+    
+    //Initialize chart with empty data
 
     const portfolioOption = {
     animation: false,
@@ -572,7 +573,8 @@
     right: 0,
     top: 40,
     bottom: 0,
-    containLabel: true
+    data: ['Price'],
+    textStyle: { color: '#1f2937' }
     },
     legend: {
     top: 0,
@@ -581,7 +583,7 @@
     },
     xAxis: {
     type: 'category',
-    data: views[currentView].xAxis,
+    data: [],
     axisLine: { show: false },
     axisTick: { show: false },
     axisLabel: { color: '#6b7280' }
@@ -596,7 +598,7 @@
     series: [
     {
     name: 'Total Portfolio Value',
-    data: views[currentView].series[0],
+    data: [],
     type: 'line',
     smooth: true,
     symbol: 'none',
@@ -605,7 +607,7 @@
     },
     {
     name: 'Stocks',
-    data: views[currentView].series[1],
+    data: [],
     type: 'line',
     smooth: true,
     symbol: 'none',
@@ -613,7 +615,7 @@
     },
     {
     name: 'ETFs',
-    data: views[currentView].series[2],
+    data: [],
     type: 'line',
     smooth: true,
     symbol: 'none',
@@ -621,7 +623,7 @@
     },
     {
     name: 'Bonds',
-    data: views[currentView].series[3],
+    data: [],
     type: 'line',
     smooth: true,
     symbol: 'none',
@@ -629,7 +631,7 @@
     },
     {
     name: 'Cash',
-    data: views[currentView].series[4],
+    data: [],
     type: 'line',
     smooth: true,
     symbol: 'none',
@@ -645,6 +647,26 @@
     };
 
     portfolioChart.setOption(portfolioOption);
+
+    async function fetchChartDate(range) {
+      const res = await fetch(`/api/stock/intraday${currrentSymbol}?range=${range}`);
+      return await res.json(); // {xAxis: [...], series: [[...], [...], ...]}
+      
+    }
+
+    async function updatePortfolioChart(range){
+      try{
+        const data = await fetchChartData(range);
+        portfolioOption.xAxis.data = data.xAxis;
+        portfolioOption.setOption(portfolioOption);
+      }catch(e) {
+        console.error('Error fetching chart data:', e);
+      }
+      
+    }
+
+    //Initial load
+    updatePortfolioChart(currentView);
 
     //Update chart when time range buttons are clicked
     const timeButtons = document.querySelectorAll('.lg\\:col-span-2 button');
