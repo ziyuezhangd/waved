@@ -3,9 +3,9 @@ import mysql from 'mysql2/promise';
 // Create a connection pool instead of a single connection
 // A pool is the standard way to manage connections in a web application
 const pool = mysql.createPool({
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'n3u3da!',
+  host: '192.168.202.36',
+  user: 'remote_user',
+  password: '12345678',
   database: 'trading_journal', // Connect directly to the database
   waitForConnections: true,
   connectionLimit: 10,
