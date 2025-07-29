@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import cors from 'cors';
 import { getStockData } from './services/stock1.js';
-import { getAllAssets} from "./services/mockDB.js";
+import { getAllAssets, getAllPortfolio } from "./services/mockDB.js";
 import { mysqlConnection } from './mysql.js'; // Import the
 import yahooFinance from 'yahoo-finance2';
 import mysql from 'mysql2'; // Import mysql2
@@ -34,9 +34,14 @@ app.get('/api/allAsset', async (req, res) => {
   }
 });
 
-app.use(express.json()); // 确保可以解析 JSON 请求体
-
-app.use(express.json()); // 确保可以解析 JSON 请求体
+app.get('/api/portfolio', async (req, res) => {
+  try {
+    const portfolio = await getAllPortfolio();
+    res.json(portfolio);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch portfolio data' });
+  }
+});
 
 // retrieve stock data for multiple symbols
 app.post('/api/stocks', async (req, res) => {

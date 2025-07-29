@@ -140,7 +140,7 @@
     <div class="flex items-center justify-between mb-4">
     <h3 class="text-sm font-medium text-gray-600">Cash</h3>
     <div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg">
-    <i class="ri-money-dollar-circle-line text-green-600"></i>
+    <i class="ri-bond-line text-green-600"></i>
     </div>
     </div>
     <div class="text-2xl font-bold text-gray-900 mb-1" id="cashValue1">$54,892.35</div>
@@ -216,8 +216,8 @@
     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
     </tr>
     </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
-    <tr>
+    <tbody class="bg-white divide-y divide-gray-200" id="portfolio-body">
+    <!-- <tr>
     <td class="px-6 py-4 whitespace-nowrap">
     <div class="flex items-center">
     <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-lg mr-3">
@@ -443,7 +443,7 @@
     <button class="text-primary hover:text-primary/80">Edit</button>
     <button class="text-red-600 hover:text-red-800">Remove</button>
     </td>
-    </tr>
+    </tr> -->
     </tbody>
     </table>
     </div>
@@ -753,49 +753,111 @@
     });
     });
     </script>
-    <script id="timeRangeButtons">
-    document.addEventListener('DOMContentLoaded', function() {
-    const timeButtons = document.querySelectorAll('.lg\\:col-span-2 button');
-    timeButtons.forEach(button => {
-    button.addEventListener('click', function() {
-    timeButtons.forEach(btn => {
-    btn.classList.remove('text-primary', 'bg-primary/10');
-    btn.classList.add('text-gray-600');
-    });
-    this.classList.remove('text-gray-600');
-    this.classList.add('text-primary', 'bg-primary/10');
-    });
-    });
-    const categoryButtons = document.querySelectorAll('.category-btn');
-    const rows = document.querySelectorAll('tbody tr');
-    categoryButtons.forEach(button => {
-    button.addEventListener('click', function() {
-    categoryButtons.forEach(btn => {
-    btn.classList.remove('text-primary', 'bg-primary/10');
-    btn.classList.add('text-gray-600');
-    });
-    this.classList.remove('text-gray-600');
-    this.classList.add('text-primary', 'bg-primary/10');
-    const category = this.textContent.trim();
-    rows.forEach(row => {
-    const assetType = row.querySelector('.ri-stock-line, .ri-funds-line, .ri-money-dollar-circle-line')?.classList[0];
-    if (category === 'All Assets') {
-    row.style.display = '';
-    } else if (category === 'Stocks' && assetType === 'ri-stock-line') {
-    row.style.display = '';
-    } else if (category === 'ETFs' && assetType === 'ri-funds-line') {
-    row.style.display = '';
-    } else if (category === 'Bonds' && assetType === 'ri-money-dollar-circle-line') {
-    row.style.display = '';
-    } else {
-    row.style.display = 'none';
-    }
-    });
-    });
-    });
-    });
+    <script>
+        // 加载投资组合表格数据
+        async function loadPortfolioTable() {
+            try {
+                const response = await fetch('/api/portfolio');
+                const data = await response.json();
+                console.log(data);
+
+                const tbody = document.getElementById("portfolio-body");
+                tbody.innerHTML = "";
+
+                data.forEach((item) => {
+                    const row = document.createElement("tr");
+                    let color = "blue";
+                    if (item.asset_type === "etf") {
+                        color = "purple";
+                    } else if (item.asset_type === "bond") {
+                        color = "yellow";
+                    }
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                        <div class="w-8 h-8 flex items-center justify-center bg-${color}-100 rounded-lg mr-3">
+                        <i class="ri-${item.asset_type}-line text-${color}-600 text-sm"></i>
+                        </div>
+                        <div>
+                        <div class="text-sm font-medium text-gray-900">${item.asset_name}</div>
+                        <div class="text-sm text-gray-500">${item.asset_symbol}</div>
+                        </div>
+                        </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.quantity}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${item.price_per_unit}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="price-${item.symbol}">N/A</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$${item.total_amount}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        +32.81%
+                        </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <button class="text-primary hover:text-primary/80">Edit</button>
+                        <button class="text-red-600 hover:text-red-800">Remove</button>
+                        </td>
+                    `;
+
+                    tbody.appendChild(row);
+                });
+            } catch(err) {
+                console.error("Failed to load portfolio", err);
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            await loadPortfolioTable(); // 先加载表格
+
+            // 绑定时间按钮事件
+            const timeButtons = document.querySelectorAll('.lg\\:col-span-2 button');
+            timeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                timeButtons.forEach(btn => {
+                btn.classList.remove('text-primary', 'bg-primary/10');
+                btn.classList.add('text-gray-600');
+                });
+                this.classList.remove('text-gray-600');
+                this.classList.add('text-primary', 'bg-primary/10');
+                });
+            });
+
+            // 绑定资产类别按钮事件
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('text-primary', 'bg-primary/10');
+                        btn.classList.add('text-gray-600');
+                    });
+                    this.classList.remove('text-gray-600');
+                    this.classList.add('text-primary', 'bg-primary/10');
+
+                    const category = this.textContent.trim();
+                    const rows = document.querySelectorAll("tbody tr"); // 每次点击时重新获取行
+
+                    rows.forEach(row => {
+                        const icon = row.querySelector(".ri-stock-line, .ri-etf-line, .ri-bond-line");
+                        if (!icon) return;
+
+                        const isStock = icon.classList.contains("ri-stock-line");
+                        const isETF = icon.classList.contains("ri-etf-line");
+                        const isBond = icon.classList.contains("ri-bond-line");
+
+                        if (category === "All Assets" ||
+                            (category === "Stocks" && isStock) ||
+                            (category === "ETFs" && isETF) ||
+                            (category === "Bonds" && isBond)) {
+                            row.style.display = "";
+                        } else {
+                            row.style.display = "none";
+                        }
+                    });
+                });
+            });
+        });
     </script>
-    <script type="module">
+    <script>
         async function updatePortfolioUI() {
             try {
                 const res = await fetch('/api/allAsset');
@@ -823,5 +885,6 @@
 
         window.addEventListener('DOMContentLoaded', updatePortfolioUI);
     </script>
+    
 </body>
 </html>
