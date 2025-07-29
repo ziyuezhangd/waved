@@ -1,9 +1,9 @@
 export async function mysqlConnection() {
   const mysql = await import('mysql2');
   const connection = mysql.createConnection({
-    host: '192.168.202.36',
+    host: '127.0.0.1',
     user: 'root',
-    password: '12345678',
+    password: 'n3u3da!',
   });
     connection.connect((err) => {
         if (err) {
