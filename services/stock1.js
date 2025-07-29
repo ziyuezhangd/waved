@@ -30,21 +30,21 @@ import yahooFinance from 'yahoo-finance2';
 export async function getIntradayData(symbol, period = '1d', interval = '1m') {
   if (period === '1d') {
     return {
-      times: ['09:30', '09:31', '09:32'],
-      prices: [123.45, 123.55, 123.65]
+      xAxis: ['09:30', '09:31', '09:32'],
+      series: [123.45, 123.55, 123.65]
     };
   } else if (period === '5d') {
     return {
-      times: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-      prices: [120, 121, 122, 123, 124]
+      xAxis: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+      series: [120, 121, 122, 123, 124]
     };
   } else if (period === '1mo') {
     return {
-      times: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-      prices: [110, 115, 120, 125]
+      xAxis: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      series: [110, 115, 120, 125]
     };
   }
-  return { times: [], prices: [] };
+  return { xAxis: [], series: [] };
 };
 export async function getStockData(symbol) {
   return 123.45; // Always return a fake price for testing
