@@ -432,6 +432,86 @@ app.post('/api/buy-asset', async (req, res) => {
     }
 });
 
+app.post('/api/sell-asset', async (req, res) => {
+  const { asset_symbol, quantity, price_per_unit, sell_date } = req.body;
+  let connection;
+
+  // Basic input validation
+  if (!asset_symbol || !quantity || !price_per_unit) {
+      return res.status(400).json({ error: 'Missing required fields: asset_symbol, quantity, and price_per_unit are required.' });
+  }
+
+  const trade_time = sell_date ? new Date(sell_date) : new Date();
+  const sellQuantity = Number(quantity);
+  const sellPrice = Number(price_per_unit);
+
+  try {
+      connection = await pool.getConnection();
+      await connection.beginTransaction();
+
+      // 1. Check if the asset exists in the portfolio
+      const [portfolioRows] = await connection.query(
+          'SELECT * FROM portfolio WHERE asset_symbol = ?',
+          [asset_symbol]
+      );
+
+      if (portfolioRows.length === 0) {
+          await connection.rollback(); // Good practice to rollback even if no changes were made
+          return res.status(404).json({ error: `Asset ${asset_symbol} not found in your portfolio.` });
+      }
+
+      const existingAsset = portfolioRows[0];
+      const existingQuantity = Number(existingAsset.quantity);
+
+      // 2. Check if there is enough quantity to sell
+      if (existingQuantity < sellQuantity) {
+          await connection.rollback();
+          return res.status(400).json({ error: `Not enough quantity to sell. You have ${existingQuantity}, but tried to sell ${sellQuantity}.` });
+      }
+
+      const newQuantity = existingQuantity - sellQuantity;
+
+      // 3. Update or delete the portfolio record
+      if (newQuantity === 0) {
+          // If selling all, remove the asset from the portfolio
+          await connection.query(
+              'DELETE FROM portfolio WHERE asset_symbol = ?',
+              [asset_symbol]
+          );
+      } else {
+          // Otherwise, just update the quantity
+          await connection.query(
+              'UPDATE portfolio SET quantity = ? WHERE asset_symbol = ?',
+              [newQuantity, asset_symbol]
+          );
+      }
+
+      // 4. Insert the 'sell' transaction into the trades table
+      const [tradeResult] = await connection.query(
+          'INSERT INTO trades (asset_symbol, trade_time, asset_type, asset_name, trade_type, quantity, price_per_unit, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          [asset_symbol, trade_time, existingAsset.asset_type, existingAsset.asset_name, 'sell', sellQuantity, sellPrice, 'Asset sale']
+      );
+      const tradeId = tradeResult.insertId;
+
+      // 5. Record the cash inflow from the sale
+      const cashInflow = sellQuantity * sellPrice;
+      await connection.query(
+          'INSERT INTO cash_flow (transaction_time, transaction_type, amount, related_trade_id, notes) VALUES (?, ?, ?, ?, ?)',
+          [trade_time, 'trade_settlement', cashInflow, tradeId, `Cash received from ${asset_symbol} sale`]
+      );
+
+      await connection.commit();
+      res.status(200).json({ message: 'Asset sold successfully and trade recorded.' });
+
+  } catch (err) {
+      if (connection) await connection.rollback();
+      console.error('Error in /api/sell-asset:', err);
+      res.status(500).json({ error: 'Server error during the sell transaction.', details: err.message });
+  } finally {
+      if (connection) connection.release();
+  }
+});
+
 // Start the Express server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
