@@ -41,30 +41,32 @@ app.get('/api/stock/:symbol', async (req, res) => {
   }
 });
 
-// Provide real intraday data
-app.get('/api/stock/intraday/:symbol', async (req, res) => {
-  const { range } = req.query;
+// Provide real total intraday data
+app.get('/api/portfolio/performance', async (req, res) => {
+  const { range } = req.query; // '1D', '1W', '1M'
+  let sql = '';
+  if (range === '1D') {
+    sql = "SELECT time, total_value FROM intraday_asset_summary WHERE DATE(time) = CURDATE() ORDER BY time ASC";
+  } else if (range === '1W') {
+    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM intraday_asset_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(time) ORDER BY time ASC";
+  } else if (range === '1M') {
+    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM intraday_asset_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) GROUP BY DATE(time) ORDER BY time ASC";
+  } else {
+    return res.status(400).json({ error: 'Invalid range.' });
+  }
   try {
-    let times, prices;
-    if (range === '1D') {
-      ({ times, prices } = await getIntradayData(req.params.symbol, '1d', '1m'));
-    } else if (range === '1W') {
-      ({ times, prices } = await getIntradayData(req.params.symbol, '5d', '5m'));
-    } else if (range === '1M') {
-      ({ times, prices } = await getIntradayData(req.params.symbol, '1mo', '1d'));
-    } else {
-      return res.status(400).json({ error: 'Invalid range.' });
-    }
+    const [rows] = await pool.query(sql);
     res.json({
-      xAxis: times,
-      series: [prices]
+      xAxis: rows.map(r => r.time),
+      series: [rows.map(r => r.total_value)]
     });
   } catch (err) {
-    console.error('Error in getIntradayData:', err);
-    res.status(500).json({ error: 'Failed to fetch intraday data' });
+    console.error('Error in getPortfolioPerformance:', err);
+    res.status(500).json({ error: 'Failed to fetch portfolio performance' });
   }
 });
 
+// --- New API Endpoints ---
 app.get('/api/allAsset', async (req, res) => {
   try {
     const asset = await getAllAssets();
