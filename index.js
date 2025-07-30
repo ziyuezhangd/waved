@@ -83,44 +83,44 @@ app.get('/api/portfolio', async (req, res) => {
   }
 });
 
-// --- Get Stock Info for Distinct Symbols from Database ---
-app.get('/api/allPortfolio', async (req, res) => {
-  let connection;
-  try {
-    connection = await pool.getConnection();
-    const [rows] = await connection.query('SELECT DISTINCT asset_symbol, asset_type FROM trades');
-    const symbolsWithType = rows.filter(row => row.asset_symbol);
-
-    if (symbolsWithType.length === 0) {
-      return res.status(404).json({ error: 'No asset symbols found in database' });
-    }
-
-    const results = await Promise.all(
-      symbolsWithType.map(async ({ asset_symbol, asset_type }) => {
-        try {
-          const quote = await yahooFinance.quote(asset_symbol);
-          if (!quote) return { symbol: asset_symbol, error: 'Not found', asset_type };
-          return {
-            symbol: quote.symbol,
-            name: quote.longName || quote.shortName,
-            price: quote.regularMarketPrice,
-            currency: quote.currency,
-            marketState: quote.marketState,
-            asset_type
-          };
-        } catch (err) {
-          return { symbol: asset_symbol, error: err.message, asset_type };
-        }
-      })
-    );
-    res.json(results);
-  } catch (err) {
-    console.error('Error in GET /api/stocks:', err);
-    res.status(500).json({ error: 'Server error fetching stocks' });
-  } finally {
-    if (connection) connection.release();
-  }
-});
+// // --- Get Stock Info for Distinct Symbols from Database ---
+// app.get('/api/allPortfolio', async (req, res) => {
+//   let connection;
+//   try {
+//     connection = await pool.getConnection();
+//     const [rows] = await connection.query('SELECT DISTINCT asset_symbol, asset_type FROM trades');
+//     const symbolsWithType = rows.filter(row => row.asset_symbol);
+//
+//     if (symbolsWithType.length === 0) {
+//       return res.status(404).json({ error: 'No asset symbols found in database' });
+//     }
+//
+//     const results = await Promise.all(
+//       symbolsWithType.map(async ({ asset_symbol, asset_type }) => {
+//         try {
+//           const quote = await yahooFinance.quote(asset_symbol);
+//           if (!quote) return { symbol: asset_symbol, error: 'Not found', asset_type };
+//           return {
+//             symbol: quote.symbol,
+//             name: quote.longName || quote.shortName,
+//             price: quote.regularMarketPrice,
+//             currency: quote.currency,
+//             marketState: quote.marketState,
+//             asset_type
+//           };
+//         } catch (err) {
+//           return { symbol: asset_symbol, error: err.message, asset_type };
+//         }
+//       })
+//     );
+//     res.json(results);
+//   } catch (err) {
+//     console.error('Error in GET /api/stocks:', err);
+//     res.status(500).json({ error: 'Server error fetching stocks' });
+//   } finally {
+//     if (connection) connection.release();
+//   }
+// });
 
 app.get('/api/db-test', (req, res) => {
   const connection = mysql.createConnection({
@@ -332,6 +332,84 @@ app.get('/api/all-portfolio', async (req, res) => {
         res.json(enriched);
     } catch (err) {
         console.error('Error fetching enriched portfolio:', err);
+        res.status(500).json({ error: 'Server error.' });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.post('/api/buy-asset', async (req, res) => {
+    const { asset_symbol, asset_type, quantity, price_per_unit, purchase_date } = req.body;
+    let connection;
+
+    if (!asset_symbol || !quantity || !price_per_unit) {
+        return res.status(400).json({ error: 'Missing required fields (asset_symbol, quantity, price_per_unit)' });
+    }
+
+    try {
+        connection = await pool.getConnection();
+        await connection.beginTransaction();
+
+        const [portfolioRows] = await connection.query(
+            'SELECT * FROM portfolio WHERE asset_symbol = ?',
+            [asset_symbol]
+        );
+
+        // 设置 trade_time：使用传入时间或默认当前时间
+        const trade_time = purchase_date ? new Date(purchase_date) : new Date();
+
+        // ====== 已存在资产：更新 portfolio + 新增 trade ======
+        if (portfolioRows.length > 0) {
+            const existing = portfolioRows[0];
+            const totalQuantity = Number(existing.quantity) + Number(quantity);
+            const newAvgPrice = (
+                (Number(existing.quantity) * Number(existing.avg_purchase_price)) +
+                (Number(quantity) * Number(price_per_unit))
+            ) / totalQuantity;
+
+            await connection.query(
+                'UPDATE portfolio SET quantity = ?, avg_purchase_price = ? WHERE asset_symbol = ?',
+                [totalQuantity, newAvgPrice, asset_symbol]
+            );
+
+            await connection.query(
+                'INSERT INTO trades (asset_symbol, trade_time, asset_type, asset_name, trade_type, quantity, price_per_unit, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [asset_symbol, trade_time, existing.asset_type, existing.asset_name, 'buy', quantity, price_per_unit, 'Additional buy']
+            );
+
+            await connection.commit();
+            return res.status(200).json({ message: 'Updated portfolio and recorded trade.' });
+        }
+
+        // ====== 新资产：先验证 Yahoo Finance 符号是否合法 ======
+        const quote = await yahooFinance.quote(asset_symbol);
+        if (!quote || !quote.symbol) {
+            await connection.rollback();
+            return res.status(400).json({ error: 'Invalid symbol, not found on Yahoo Finance.' });
+        }
+
+        const asset_name = quote.longName || quote.shortName || asset_symbol;
+        const quoteType = quote.quoteType;
+        let resolvedType = 'stock';
+        if (quoteType === 'ETF') resolvedType = 'etf';
+        else if (quoteType === 'BOND') resolvedType = 'bond';
+
+        await connection.query(
+            'INSERT INTO portfolio (asset_symbol, asset_type, asset_name, quantity, avg_purchase_price) VALUES (?, ?, ?, ?, ?)',
+            [asset_symbol, resolvedType, asset_name, quantity, price_per_unit]
+        );
+
+        await connection.query(
+            'INSERT INTO trades (asset_symbol, trade_time, asset_type, asset_name, trade_type, quantity, price_per_unit, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [asset_symbol, trade_time, resolvedType, asset_name, 'buy', quantity, price_per_unit, 'Initial purchase']
+        );
+
+        await connection.commit();
+        res.status(201).json({ message: 'New asset added and trade recorded.' });
+
+    } catch (err) {
+        if (connection) await connection.rollback();
+        console.error('Error in /api/buy-asset:', err);
         res.status(500).json({ error: 'Server error.' });
     } finally {
         if (connection) connection.release();
