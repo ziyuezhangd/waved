@@ -768,20 +768,25 @@
     <script id="totalReturnControls">
         async function updateTotalReturn() {
             try {
-                const res = await fetch('/api/allReturn');
-                const { returns } = await res.json(); // 确保后端返回的是 { returns: { Stocks, ETFs, Bonds } }
-                const res1 = await fetch('/api/allAsset');
-                const { asset } = await res1.json();
+                const res = await fetch('/api/portfolio-summary');
+                const value = await res.json(); // 后端返回的是 {  Stocks, ETFs, Bonds }
+                console.log(value);
+                const res1 = await fetch('/api/get-cost');  // 后端返回的是 { stock, etf, bond }
+                const cost = await res1.json();
+                console.log(cost)
 
                 const formatter = new Intl.NumberFormat('en-US', {
                     style: 'currency',
                     currency: 'USD',
                 });
-
+                // 计算每类的收益
+                const stocksReturn = value.Stocks - cost.stock;
+                const etfsReturn = value.ETFs - cost.etf;
+                const bondsReturn = value.Bonds - cost.bond;
                 // 计算每类的百分比
-                const stocksPercent = (returns.Stocks / asset.Stocks) * 100;
-                const etfsPercent = (returns.ETFs / asset.ETFs) * 100;
-                const bondsPercent = (returns.Bonds / asset.Bonds) * 100;
+                const stocksPercent = (stocksReturn / cost.stock) * 100;
+                const etfsPercent = (etfsReturn / cost.etf) * 100;
+                const bondsPercent = (bondsReturn / cost.bond) * 100;
 
                 // 设置函数：更新百分比文本和颜色
                 function setPercent(id, percent) {
@@ -800,15 +805,15 @@
                 }
 
                 // 更新资产分类的数值
-                document.getElementById('stocksReturn').textContent = formatter.format(returns.Stocks);
-                document.getElementById('etfsReturn').textContent = formatter.format(returns.ETFs);
-                document.getElementById('bondsReturn').textContent = formatter.format(returns.Bonds);
+                document.getElementById('stocksReturn').textContent = formatter.format(stocksReturn);
+                document.getElementById('etfsReturn').textContent = formatter.format(etfsReturn);
+                document.getElementById('bondsReturn').textContent = formatter.format(bondsReturn);
                 setPercent('stocksReturnPercent', stocksPercent);
                 setPercent('etfsReturnPercent', etfsPercent);
                 setPercent('bondsReturnPercent', bondsPercent);
 
                 // 更新总资产
-                const total = returns.Stocks + returns.ETFs + returns.Bonds;
+                const total = stocksReturn + etfsReturn + bondsReturn;
                 document.getElementById('totalReturn').textContent = formatter.format(total);
             } catch (err) {
                 console.error('Failed to fetch return data:', err);
