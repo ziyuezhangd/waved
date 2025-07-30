@@ -1,15 +1,17 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
-import yahooFinance from 'yahoo-finance2';
-import { pool } from './connectionPool.js'; // The single source for DB connections
+import { pool } from './connectionPool.js'; // Import the connection pool
 
-// Note: The services/stock1.js and services/mockDB.js imports are kept as they were.
+// Note: The services/stock1.js and services/mockDB.js and their endpoints are kept as they were.
 import { getStockData } from './services/stock1.js';
 import { getAllAssets, getAllPortfolio } from "./services/mockDB.js";
-// Note: The direct import of mysql2 is no longer needed for endpoints, but db-test can use it for type info if needed.
-// We'll leave it for now as it doesn't harm anything.
-import mysql from 'mysql2'; 
+// import { mysqlConnection } from './mysql.js'; // Import the
+import yahooFinance from 'yahoo-finance2';
+// import mysql from 'mysql2'; // Import mysql2
+
+// This is kept from your version, but is not used by the new endpoints
+// mysqlConnection();
 
 const app = express();
 const PORT = 3000;
@@ -23,7 +25,7 @@ const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// --- API Endpoints ---
+// --- Existing API Endpoints (Unchanged) ---
 
 app.get('/api/stock/:symbol', async (req, res) => {
   try {
@@ -52,61 +54,73 @@ app.get('/api/portfolio', async (req, res) => {
   }
 });
 
-app.post('/api/stocks', async (req, res) => {
-  const symbols = req.body.symbols;
-  if (!Array.isArray(symbols) || symbols.length === 0) {
-    return res.status(400).json({ error: 'No symbols provided' });
-  }
+// --- Get Stock Info for Distinct Symbols from Database ---
+app.get('/api/stocks', async (req, res) => {
+  let connection;
   try {
+    connection = await pool.getConnection();
+    const [rows] = await connection.query('SELECT DISTINCT asset_symbol, asset_type FROM trades');
+    const symbolsWithType = rows.filter(row => row.asset_symbol);
+
+    if (symbolsWithType.length === 0) {
+      return res.status(404).json({ error: 'No asset symbols found in database' });
+    }
+
     const results = await Promise.all(
-      symbols.map(async (symbol) => {
+      symbolsWithType.map(async ({ asset_symbol, asset_type }) => {
         try {
-          const quote = await yahooFinance.quote(symbol);
-          if (!quote) return { symbol, error: 'Not found' };
+          const quote = await yahooFinance.quote(asset_symbol);
+          if (!quote) return { symbol: asset_symbol, error: 'Not found', asset_type };
           return {
             symbol: quote.symbol,
             name: quote.longName || quote.shortName,
             price: quote.regularMarketPrice,
             currency: quote.currency,
-            marketState: quote.marketState
+            marketState: quote.marketState,
+            asset_type
           };
         } catch (err) {
-          return { symbol, error: err.message };
+          return { symbol: asset_symbol, error: err.message, asset_type };
         }
       })
     );
     res.json(results);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: 'Server Error' });
-  }
-});
-
-// --- Database Endpoints ---
-
-// Updated to use the connection pool for a more realistic test
-app.get('/api/db-test', async (req, res) => {
-  let connection;
-  try {
-    // Get a connection from the pool
-    connection = await pool.getConnection();
-    console.log('Database connection test was successful via pool.');
-    res.json({
-      success: true,
-      message: 'Successfully connected to the database via pool.',
-    });
-  } catch (err) {
-    console.error('Error connecting to MySQL via pool:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to connect to the database via pool.',
-      error: err.code,
-    });
+    console.error('Error in GET /api/stocks:', err);
+    res.status(500).json({ error: 'Server error fetching stocks' });
   } finally {
-    // IMPORTANT: Always release the connection back to the pool
     if (connection) connection.release();
   }
 });
+
+app.get('/api/db-test', (req, res) => {
+  const connection = mysql.createConnection({
+    host: '127.0.0.1',
+    user: 'root',
+    password: 'n3u3da!',
+  });
+  connection.connect((err) => {
+    if (err) {
+      console.error('Error connecting to MySQL for test:', err);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to connect to the database.',
+        error: err.code,
+      });
+    }
+    console.log('Database connection test was successful.');
+    res.json({
+      success: true,
+      message: 'Successfully connected to the database.',
+    });
+    connection.end();
+  });
+});
+
+
+// =====================================================================
+// == DATABASE ENDPOINTS (WITH FIX)
+// =====================================================================
 
 app.post('/api/generate-sample-data', async (req, res) => {
     let connection;
@@ -130,13 +144,13 @@ app.post('/api/generate-sample-data', async (req, res) => {
         const aaplBuyPrice = aaplQuote.regularMarketPrice;
         const aaplBuyQuantity = 20;
         const aaplBuyTotal = aaplBuyQuantity * aaplBuyPrice;
-        
+
         const [aaplTradeResult] = await connection.execute(
             `INSERT INTO trades (asset_symbol, trade_time, asset_type, asset_name, trade_type, quantity, price_per_unit, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             ['AAPL', new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), 'stock', aaplQuote.longName, 'buy', aaplBuyQuantity, aaplBuyPrice, 'Long-term holding']
         );
         const aaplTradeId = aaplTradeResult.insertId;
-        
+
         await connection.execute(
             `INSERT INTO cash_flow (transaction_time, transaction_type, amount, related_trade_id, notes) VALUES (?, ?, ?, ?, ?)`,
             [new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), 'trade_settlement', -aaplBuyTotal, aaplTradeId, 'Cash used for AAPL purchase']
@@ -165,19 +179,28 @@ app.post('/api/generate-sample-data', async (req, res) => {
             [new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), 'dividend', 25.50, 'Quarterly dividend from AAPL']
         );
         console.log("Generated dividend payment.");
-        
+
+        // =====================================================================
+        // == THE FIX IS HERE: Manually building the query
+        // =====================================================================
         const dailySummaryData = [
             [new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().slice(0,10), 96580.00],
             [new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().slice(0,10), 98200.50],
             [new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString().slice(0,10), 99500.75]
         ];
-        
+
+        // 1. Create a string of placeholders like '(?, ?), (?, ?), (?, ?)'
         const placeholders = dailySummaryData.map(() => '(?, ?)').join(', ');
+
+        // 2. Create the full SQL string
         const sql = `INSERT INTO daily_asset_summary (record_date, total_asset_value) VALUES ${placeholders}`;
+
+        // 3. Flatten the data array from [[a, b], [c, d]] to [a, b, c, d]
         const flatData = dailySummaryData.flat();
 
+        // 4. Execute the query. We can use .execute() again because the SQL is now standard.
         await connection.execute(sql, flatData);
-        
+
         console.log("Inserted daily asset summaries.");
 
         await connection.commit();
@@ -194,6 +217,7 @@ app.post('/api/generate-sample-data', async (req, res) => {
 });
 
 
+// --- Get All Trades ---
 app.get('/api/trades', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM `trades` ORDER BY `trade_time` DESC');
@@ -205,6 +229,7 @@ app.get('/api/trades', async (req, res) => {
 });
 
 
+// --- Get All Cash Flow ---
 app.get('/api/cash-flow', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM `cash_flow` ORDER BY `transaction_time` DESC');
@@ -216,6 +241,7 @@ app.get('/api/cash-flow', async (req, res) => {
 });
 
 
+// --- Get All Daily Asset Summaries ---
 app.get('/api/daily-summary', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM `daily_asset_summary` ORDER BY `record_date` DESC');
