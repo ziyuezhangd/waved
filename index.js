@@ -391,10 +391,10 @@ app.post('/api/buy-asset', async (req, res) => {
         }
 
         const asset_name = quote.longName || quote.shortName || asset_symbol;
-        const quoteType = quote.quoteType;
-        let resolvedType = 'stock';
-        if (quoteType === 'ETF') resolvedType = 'etf';
-        else if (quoteType === 'BOND') resolvedType = 'bond';
+
+// 信任用户输入，但仅限合法 asset_type
+        const allowedTypes = ['stock', 'etf', 'bond'];
+        let resolvedType = allowedTypes.includes(asset_type.toLowerCase()) ? asset_type.toLowerCase() : 'stock';
 
         // 插入 portfolio
         await connection.query(
@@ -505,6 +505,58 @@ app.post('/api/sell-asset', async (req, res) => {
   } finally {
       if (connection) connection.release();
   }
+});
+
+app.get('/api/portfolio-summary', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+
+        // 查询portfolio中的当前价格和资产类别
+        const [portfolioRows] = await connection.query('SELECT * FROM portfolio');
+
+        // 获取所有 symbol 的最新价格
+        const priceMap = {};
+        await Promise.all(portfolioRows.map(async row => {
+            try {
+                const quote = await yahooFinance.quote(row.asset_symbol);
+                if (quote && quote.regularMarketPrice) {
+                    priceMap[row.asset_symbol] = quote.regularMarketPrice;
+                }
+            } catch (e) {
+                console.warn(`Failed to fetch price for ${row.asset_symbol}:`, e.message);
+                priceMap[row.asset_symbol] = 0;
+            }
+        }));
+
+        // 分类汇总
+        const summary = {
+            Stocks: 0,
+            ETFs: 0,
+            Bonds: 0,
+            Cash: 0 // 稍后计算
+        };
+
+        for (const row of portfolioRows) {
+            const price = priceMap[row.asset_symbol] ?? 0;
+            const value = price * Number(row.quantity);
+
+            if (row.asset_type === 'stock') summary.Stocks += value;
+            else if (row.asset_type === 'etf') summary.ETFs += value;
+            else if (row.asset_type === 'bond') summary.Bonds += value;
+        }
+
+        // 获取现金余额
+        const cash = await getCurrentCashAmount(connection);
+        summary.Cash = cash;
+
+        res.json(summary);
+    } catch (err) {
+        console.error('Error in /api/portfolio-summary:', err);
+        res.status(500).json({ error: 'Failed to compute portfolio summary.' });
+    } finally {
+        if (connection) connection.release();
+    }
 });
 
 // Start the Express server
