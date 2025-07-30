@@ -55,7 +55,7 @@ app.get('/api/portfolio', async (req, res) => {
 });
 
 // --- Get Stock Info for Distinct Symbols from Database ---
-app.get('/api/stocks', async (req, res) => {
+app.get('/api/allPortfolio', async (req, res) => {
   let connection;
   try {
     connection = await pool.getConnection();
