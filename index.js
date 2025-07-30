@@ -6,7 +6,6 @@ import { pool } from './connectionPool.js'; // Import the connection pool
 // Note: The services/stock1.js and services/mockDB.js and their endpoints are kept as they were.
 import { getStockData } from './services/stock1.js';
 
-import { getIntradayData } from './services/stock1.js';
 
 import { getAllAssets, getAllPortfolio } from "./services/mockDB.js";
 // import { mysqlConnection } from './mysql.js'; // Import the
