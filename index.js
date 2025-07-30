@@ -292,7 +292,7 @@ app.get('/api/all-portfolio', async (req, res) => {
 
         // 遍历每一项，用yahoo finance查询当前价格并计算总值和performance
         const enriched = await Promise.all(rows.map(async (row) => {
-            const { asset_symbol, quantity, purchase_price, asset_type, asset_name } = row;
+            const { asset_symbol, quantity, avg_purchase_price, asset_type, asset_name } = row;
 
             try {
                 const quote = await yahooFinance.quote(asset_symbol);
@@ -303,7 +303,7 @@ app.get('/api/all-portfolio', async (req, res) => {
 
                 if (current_price !== null) {
                     total_value = current_price * Number(quantity);
-                    const change_pct = ((current_price - Number(purchase_price)) / Number(purchase_price)) * 100;
+                    const change_pct = ((current_price - Number(avg_purchase_price)) / Number(avg_purchase_price)) * 100;
                     performance = `${change_pct >= 0 ? '+' : ''}${change_pct.toFixed(2)}%`;
                 }
 
@@ -312,7 +312,7 @@ app.get('/api/all-portfolio', async (req, res) => {
                     asset_type,
                     asset_name,
                     quantity,
-                    purchase_price,
+                    avg_purchase_price,
                     current_price,
                     total_value,
                     performance
@@ -323,7 +323,7 @@ app.get('/api/all-portfolio', async (req, res) => {
                     asset_type,
                     asset_name,
                     quantity,
-                    purchase_price,
+                    avg_purchase_price,
                     error: `Failed to fetch price: ${err.message}`
                 };
             }

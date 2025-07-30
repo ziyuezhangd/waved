@@ -126,11 +126,11 @@ create table portfolio
         primary key,
     asset_name     varchar(255)                  not null,
     quantity       decimal(18, 8)                not null,
-    purchase_price decimal(18, 8)                not null
+    avg_purchase_price decimal(18, 8)                not null
 );
 
 /*
-INSERT INTO portfolio (asset_symbol, asset_type, asset_name, quantity, purchase_price) VALUES
+INSERT INTO portfolio (asset_symbol, asset_type, asset_name, quantity, avg_purchase_price) VALUES
                                                                                            ('AAPL', 'stock', 'Apple Inc.', 50, 145.30),
                                                                                            ('MSFT', 'stock', 'Microsoft Corp.', 30, 310.00),
                                                                                            ('TSLA', 'stock', 'Tesla Inc.', 20, 245.50),
