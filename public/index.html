@@ -628,41 +628,17 @@
     </script>
     <script id="portfolioTableControls">
         // 加载投资组合表格数据
-        // 获取资产实时价格
-        async function loadStockPrice(symbol) {
-          try {
-            const res = await fetch(`/api/stock/${symbol}`);
-            const data = await res.json();
-            if (data.price) {
-              document.getElementById(`price-${symbol}`).textContent = `$${data.price.toFixed(2)}`;
-            } else {
-              document.getElementById(`price-${symbol}`).textContent = 'N/A';
-            }
-          } catch (e) {
-            console.error(e);
-            document.getElementById(`price-${symbol}`).textContent = 'Error';
-          }
-        };
         async function loadPortfolioTable() {
             try {
-                const response = await fetch('/api/portfolio');
+                const response = await fetch('/api/all-portfolio');
                 const data = await response.json();
                 const tbody = document.getElementById("portfolio-body");
                 tbody.innerHTML = "";
 
                 for (const item of data) {
-                    // 获取实时价格
-                    const res = await fetch(`/api/stock/${item.asset_symbol}`);
-                    const stockData = await res.json();
-                    const currentPrice = stockData.price || item.price_per_unit;
-
-                    // 计算涨跌幅
-                    const changePercent = ((currentPrice - item.price_per_unit) / item.price_per_unit) * 100;
-                    const isPositive = changePercent >= 0;
-
                     // 设置颜色
+                    const isPositive = String(item.performance).trim().charAt(0) === '+';
                     const badgeColor = isPositive ? "green" : "red";
-                    const changeText = `${isPositive ? "+" : ""}${changePercent.toFixed(2)}%`;
 
                     // 创建表格行
                     const row = document.createElement("tr");
@@ -685,13 +661,13 @@
                         </div>
                         </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${item.quantity}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${item.price_per_unit}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="price-${item.asset_symbol}">$${currentPrice.toFixed(2)}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$${(currentPrice * item.quantity).toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${Number(item.quantity).toFixed(0)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">$${Number(item.avg_purchase_price).toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" id="price-${item.asset_symbol}">$${Number(item.current_price).toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">$${Number(item.total_value).toFixed(2)}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${badgeColor}-100 text-${badgeColor}-800">
-                        ${changeText}
+                        ${item.performance}
                         </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">

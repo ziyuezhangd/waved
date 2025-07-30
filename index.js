@@ -517,6 +517,150 @@ app.post('/api/sell-asset', async (req, res) => {
   }
 });
 
+app.get('/api/portfolio-summary', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+
+        // 查询portfolio中的当前价格和资产类别
+        const [portfolioRows] = await connection.query('SELECT * FROM portfolio');
+
+        // 获取所有 symbol 的最新价格
+        const priceMap = {};
+        await Promise.all(portfolioRows.map(async row => {
+            try {
+                const quote = await yahooFinance.quote(row.asset_symbol);
+                if (quote && quote.regularMarketPrice) {
+                    priceMap[row.asset_symbol] = quote.regularMarketPrice;
+                }
+            } catch (e) {
+                console.warn(`Failed to fetch price for ${row.asset_symbol}:`, e.message);
+                priceMap[row.asset_symbol] = 0;
+            }
+        }));
+
+        // 分类汇总
+        const summary = {
+            Stocks: 0,
+            ETFs: 0,
+            Bonds: 0,
+            Cash: 0 // 稍后计算
+        };
+
+        for (const row of portfolioRows) {
+            const price = priceMap[row.asset_symbol] ?? 0;
+            const value = price * Number(row.quantity);
+
+            if (row.asset_type === 'stock') summary.Stocks += value;
+            else if (row.asset_type === 'etf') summary.ETFs += value;
+            else if (row.asset_type === 'bond') summary.Bonds += value;
+        }
+
+        // 获取现金余额
+        const cash = await getCurrentCashAmount(connection);
+        summary.Cash = cash;
+
+        res.json(summary);
+    } catch (err) {
+        console.error('Error in /api/portfolio-summary:', err);
+        res.status(500).json({ error: 'Failed to compute portfolio summary.' });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.get('/api/get-cost', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+
+        // SQL query to calculate the total cost for each asset type
+        const query = `
+            SELECT
+                asset_type,
+                SUM(quantity * avg_purchase_price) AS total_cost
+            FROM
+                portfolio
+            GROUP BY
+                asset_type;
+        `;
+
+        const [rows] = await connection.query(query);
+
+        // Initialize a result object with default values
+        const costs = {
+            stock: 0,
+            etf: 0,
+            bond: 0
+        };
+
+        // Populate the result object with data from the database
+        for (const row of rows) {
+            if (costs.hasOwnProperty(row.asset_type)) {
+                costs[row.asset_type] = parseFloat(row.total_cost);
+            }
+        }
+
+        res.json(costs);
+
+    } catch (err) {
+        console.error('Error in /api/get-cost:', err);
+        res.status(500).json({ error: 'Server error fetching asset costs.', details: err.message });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.post('/api/cash-flow', async (req, res) => {
+    const { transaction_type, amount, notes } = req.body;
+    const allowedTypes = ['deposit', 'withdrawal'];
+
+    // ✅ 校验输入
+    if (!transaction_type || !amount) {
+        return res.status(400).json({ error: 'transaction_type and amount are required.' });
+    }
+
+    if (!allowedTypes.includes(transaction_type)) {
+        return res.status(400).json({ error: 'Invalid transaction_type. Must be deposit or withdrawal.' });
+    }
+
+    if (Number(amount) <= 0) {
+        return res.status(400).json({ error: 'Amount must be greater than 0.' });
+    }
+
+    let connection;
+    try {
+        connection = await pool.getConnection();
+
+        // ✅ 提前在 connection 获取后再做余额检查
+        if (transaction_type === 'withdrawal') {
+            const currentBalance = await getCurrentCashAmount(connection);
+            if (Number(amount) > currentBalance) {
+                return res.status(400).json({ error: 'Insufficient cash balance for withdrawal.' });
+            }
+        }
+
+        const now = new Date();
+        await connection.query(
+            `INSERT INTO cash_flow (transaction_time, transaction_type, amount, notes)
+             VALUES (?, ?, ?, ?)`,
+            [
+                now,
+                transaction_type,
+                transaction_type === 'withdrawal' ? -Number(amount) : Number(amount),
+                notes || `Cash ${transaction_type}`
+            ]
+        );
+
+        res.status(201).json({ message: `Cash ${transaction_type} recorded successfully.` });
+    } catch (err) {
+        console.error('Error in /api/cash-flow:', err);
+        res.status(500).json({ error: 'Failed to record cash flow.' });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
 // Start the Express server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
