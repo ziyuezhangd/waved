@@ -1,5 +1,5 @@
 import yahooFinance from 'yahoo-finance2';
-import { pool } from '../connectionPool';
+import { pool } from '../connectionPool.js';
 
 
 // 查询实时价格
