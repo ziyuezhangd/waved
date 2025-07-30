@@ -413,7 +413,7 @@
 
 
     async function fetchChartData(range) {
-      const res = await fetch(`/api/stock/intraday/${currrentSymbol}?range=${range}`);
+      const res = await fetch(`/api/portfolio/performance?range=${range}`);
       return await res.json(); // {xAxis: [...], series: [[...], [...], ...]}
       
     }

@@ -6,7 +6,6 @@ import { pool } from './connectionPool.js'; // Import the connection pool
 // Note: The services/stock1.js and services/mockDB.js and their endpoints are kept as they were.
 import { getStockData } from './services/stock1.js';
 
-import { getIntradayData } from './services/stock1.js';
 
 import { getAllAssets, getAllPortfolio, getAllReturns } from "./services/mockDB.js";
 // import { mysqlConnection } from './mysql.js'; // Import the
@@ -41,30 +40,32 @@ app.get('/api/stock/:symbol', async (req, res) => {
   }
 });
 
-// Provide real intraday data
-app.get('/api/stock/intraday/:symbol', async (req, res) => {
-  const { range } = req.query;
+// Provide real total intraday data
+app.get('/api/portfolio/performance', async (req, res) => {
+  const { range } = req.query; // '1D', '1W', '1M'
+  let sql = '';
+  if (range === '1D') {
+    sql = "SELECT time, total_value FROM daily_asset_summary WHERE DATE(time) = CURDATE() ORDER BY time ASC";
+  } else if (range === '1W') {
+    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM daily_asset_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(time) ORDER BY time ASC";
+  } else if (range === '1M') {
+    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM daily_asset_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) GROUP BY DATE(time) ORDER BY time ASC";
+  } else {
+    return res.status(400).json({ error: 'Invalid range.' });
+  }
   try {
-    let times, prices;
-    if (range === '1D') {
-      ({ times, prices } = await getIntradayData(req.params.symbol, '1d', '1m'));
-    } else if (range === '1W') {
-      ({ times, prices } = await getIntradayData(req.params.symbol, '5d', '5m'));
-    } else if (range === '1M') {
-      ({ times, prices } = await getIntradayData(req.params.symbol, '1mo', '1d'));
-    } else {
-      return res.status(400).json({ error: 'Invalid range.' });
-    }
+    const [rows] = await pool.query(sql);
     res.json({
-      xAxis: times,
-      series: [prices]
+      xAxis: rows.map(r => r.time),
+      series: [rows.map(r => r.total_value)]
     });
   } catch (err) {
-    console.error('Error in getIntradayData:', err);
-    res.status(500).json({ error: 'Failed to fetch intraday data' });
+    console.error('Error in getPortfolioPerformance:', err);
+    res.status(500).json({ error: 'Failed to fetch portfolio performance' });
   }
 });
 
+// --- New API Endpoints ---
 app.get('/api/allAsset', async (req, res) => {
   try {
     const asset = await getAllAssets();
@@ -92,44 +93,7 @@ app.get('/api/portfolio', async (req, res) => {
   }
 });
 
-// // --- Get Stock Info for Distinct Symbols from Database ---
-// app.get('/api/allPortfolio', async (req, res) => {
-//   let connection;
-//   try {
-//     connection = await pool.getConnection();
-//     const [rows] = await connection.query('SELECT DISTINCT asset_symbol, asset_type FROM trades');
-//     const symbolsWithType = rows.filter(row => row.asset_symbol);
-//
-//     if (symbolsWithType.length === 0) {
-//       return res.status(404).json({ error: 'No asset symbols found in database' });
-//     }
-//
-//     const results = await Promise.all(
-//       symbolsWithType.map(async ({ asset_symbol, asset_type }) => {
-//         try {
-//           const quote = await yahooFinance.quote(asset_symbol);
-//           if (!quote) return { symbol: asset_symbol, error: 'Not found', asset_type };
-//           return {
-//             symbol: quote.symbol,
-//             name: quote.longName || quote.shortName,
-//             price: quote.regularMarketPrice,
-//             currency: quote.currency,
-//             marketState: quote.marketState,
-//             asset_type
-//           };
-//         } catch (err) {
-//           return { symbol: asset_symbol, error: err.message, asset_type };
-//         }
-//       })
-//     );
-//     res.json(results);
-//   } catch (err) {
-//     console.error('Error in GET /api/stocks:', err);
-//     res.status(500).json({ error: 'Server error fetching stocks' });
-//   } finally {
-//     if (connection) connection.release();
-//   }
-// });
+
 
 app.get('/api/db-test', (req, res) => {
   const connection = mysql.createConnection({
@@ -347,27 +311,59 @@ app.get('/api/all-portfolio', async (req, res) => {
     }
 });
 
+// 计算当前现金余额（使用数据库连接）
+async function getCurrentCashAmount(connection) {
+    const [[{ balance }]] = await connection.query('SELECT SUM(amount) AS balance FROM cash_flow');
+    return balance ?? 0;
+}
+
+app.get('/api/cash-amount', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        const balance = await getCurrentCashAmount(connection);
+        res.json({ balance });
+    } catch (err) {
+        console.error('Error calculating cash amount:', err);
+        res.status(500).json({ error: 'Failed to calculate cash amount.' });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
 app.post('/api/buy-asset', async (req, res) => {
     const { asset_symbol, asset_type, quantity, price_per_unit, purchase_date } = req.body;
     let connection;
 
-    if (!asset_symbol || !quantity || !price_per_unit) {
+    if (!asset_type || !asset_symbol || !quantity || !price_per_unit) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    if (Number(quantity) <= 0 || Number(price_per_unit) <= 0) {
+        return res.status(400).json({ error: 'Quantity and price per unit must be greater than 0.' });
+    }
+
     const trade_time = purchase_date ? new Date(purchase_date) : new Date();
+    const totalCost = Number(quantity) * Number(price_per_unit);
 
     try {
         connection = await pool.getConnection();
         await connection.beginTransaction();
+
+        // ✅ 检查现金余额是否足够
+        const currentBalance = await getCurrentCashAmount(connection);
+        if (currentBalance < totalCost) {
+            await connection.rollback();
+            return res.status(400).json({ error: 'Insufficient cash balance for this purchase.' });
+        }
 
         const [portfolioRows] = await connection.query(
             'SELECT * FROM portfolio WHERE asset_symbol = ?',
             [asset_symbol]
         );
 
-        // 如果资产已存在：更新 portfolio 表并插入 trades 和 cash_flow
         if (portfolioRows.length > 0) {
+            // 已存在资产，更新 portfolio
             const existing = portfolioRows[0];
             const totalQuantity = Number(existing.quantity) + Number(quantity);
             const newAvgPrice = (
@@ -390,14 +386,14 @@ app.post('/api/buy-asset', async (req, res) => {
             // 插入 cash_flow 记录
             await connection.query(
                 'INSERT INTO cash_flow (transaction_time, transaction_type, amount, related_trade_id, notes) VALUES (?, ?, ?, ?, ?)',
-                [trade_time, 'trade_settlement', -Number(quantity) * Number(price_per_unit), tradeId, `Cash used for ${asset_symbol} purchase`]
+                [trade_time, 'trade_settlement', -totalCost, tradeId, `Cash used for ${asset_symbol} purchase`]
             );
 
             await connection.commit();
             return res.status(200).json({ message: 'Updated portfolio and recorded trade.' });
         }
 
-        // 否则从 Yahoo 验证 symbol 有效性
+        // 新资产，先验证 symbol 是否有效
         const quote = await yahooFinance.quote(asset_symbol);
         if (!quote || !quote.symbol) {
             await connection.rollback();
@@ -410,23 +406,23 @@ app.post('/api/buy-asset', async (req, res) => {
         if (quoteType === 'ETF') resolvedType = 'etf';
         else if (quoteType === 'BOND') resolvedType = 'bond';
 
-        // 新增 portfolio 记录
+        // 插入 portfolio
         await connection.query(
             'INSERT INTO portfolio (asset_symbol, asset_type, asset_name, quantity, avg_purchase_price) VALUES (?, ?, ?, ?, ?)',
             [asset_symbol, resolvedType, asset_name, quantity, price_per_unit]
         );
 
-        // 插入 trades 记录
+        // 插入 trades
         const [tradeResult] = await connection.query(
             'INSERT INTO trades (asset_symbol, trade_time, asset_type, asset_name, trade_type, quantity, price_per_unit, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             [asset_symbol, trade_time, resolvedType, asset_name, 'buy', quantity, price_per_unit, 'Initial purchase']
         );
         const tradeId = tradeResult.insertId;
 
-        // 插入 cash_flow 记录
+        // 插入 cash_flow
         await connection.query(
             'INSERT INTO cash_flow (transaction_time, transaction_type, amount, related_trade_id, notes) VALUES (?, ?, ?, ?, ?)',
-            [trade_time, 'trade_settlement', -Number(quantity) * Number(price_per_unit), tradeId, `Cash used for ${asset_symbol} purchase`]
+            [trade_time, 'trade_settlement', -totalCost, tradeId, `Cash used for ${asset_symbol} purchase`]
         );
 
         await connection.commit();
@@ -439,6 +435,86 @@ app.post('/api/buy-asset', async (req, res) => {
     } finally {
         if (connection) connection.release();
     }
+});
+
+app.post('/api/sell-asset', async (req, res) => {
+  const { asset_symbol, quantity, price_per_unit, sell_date } = req.body;
+  let connection;
+
+  // Basic input validation
+  if (!asset_symbol || !quantity || !price_per_unit) {
+      return res.status(400).json({ error: 'Missing required fields: asset_symbol, quantity, and price_per_unit are required.' });
+  }
+
+  const trade_time = sell_date ? new Date(sell_date) : new Date();
+  const sellQuantity = Number(quantity);
+  const sellPrice = Number(price_per_unit);
+
+  try {
+      connection = await pool.getConnection();
+      await connection.beginTransaction();
+
+      // 1. Check if the asset exists in the portfolio
+      const [portfolioRows] = await connection.query(
+          'SELECT * FROM portfolio WHERE asset_symbol = ?',
+          [asset_symbol]
+      );
+
+      if (portfolioRows.length === 0) {
+          await connection.rollback(); // Good practice to rollback even if no changes were made
+          return res.status(404).json({ error: `Asset ${asset_symbol} not found in your portfolio.` });
+      }
+
+      const existingAsset = portfolioRows[0];
+      const existingQuantity = Number(existingAsset.quantity);
+
+      // 2. Check if there is enough quantity to sell
+      if (existingQuantity < sellQuantity) {
+          await connection.rollback();
+          return res.status(400).json({ error: `Not enough quantity to sell. You have ${existingQuantity}, but tried to sell ${sellQuantity}.` });
+      }
+
+      const newQuantity = existingQuantity - sellQuantity;
+
+      // 3. Update or delete the portfolio record
+      if (newQuantity === 0) {
+          // If selling all, remove the asset from the portfolio
+          await connection.query(
+              'DELETE FROM portfolio WHERE asset_symbol = ?',
+              [asset_symbol]
+          );
+      } else {
+          // Otherwise, just update the quantity
+          await connection.query(
+              'UPDATE portfolio SET quantity = ? WHERE asset_symbol = ?',
+              [newQuantity, asset_symbol]
+          );
+      }
+
+      // 4. Insert the 'sell' transaction into the trades table
+      const [tradeResult] = await connection.query(
+          'INSERT INTO trades (asset_symbol, trade_time, asset_type, asset_name, trade_type, quantity, price_per_unit, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          [asset_symbol, trade_time, existingAsset.asset_type, existingAsset.asset_name, 'sell', sellQuantity, sellPrice, 'Asset sale']
+      );
+      const tradeId = tradeResult.insertId;
+
+      // 5. Record the cash inflow from the sale
+      const cashInflow = sellQuantity * sellPrice;
+      await connection.query(
+          'INSERT INTO cash_flow (transaction_time, transaction_type, amount, related_trade_id, notes) VALUES (?, ?, ?, ?, ?)',
+          [trade_time, 'trade_settlement', cashInflow, tradeId, `Cash received from ${asset_symbol} sale`]
+      );
+
+      await connection.commit();
+      res.status(200).json({ message: 'Asset sold successfully and trade recorded.' });
+
+  } catch (err) {
+      if (connection) await connection.rollback();
+      console.error('Error in /api/sell-asset:', err);
+      res.status(500).json({ error: 'Server error during the sell transaction.', details: err.message });
+  } finally {
+      if (connection) connection.release();
+  }
 });
 
 // Start the Express server
