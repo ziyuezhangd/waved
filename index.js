@@ -47,9 +47,9 @@ app.get('/api/portfolio/performance', async (req, res) => {
   if (range === '1D') {
     sql = "SELECT time, total_value FROM daily_asset_summary WHERE DATE(time) = CURDATE() ORDER BY time ASC";
   } else if (range === '1W') {
-    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM intraday_asset_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(time) ORDER BY time ASC";
+    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM daily_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(time) ORDER BY time ASC";
   } else if (range === '1M') {
-    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM intraday_asset_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) GROUP BY DATE(time) ORDER BY time ASC";
+    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM daily_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) GROUP BY DATE(time) ORDER BY time ASC";
   } else {
     return res.status(400).json({ error: 'Invalid range.' });
   }
