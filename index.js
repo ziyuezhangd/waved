@@ -343,8 +343,10 @@ app.post('/api/buy-asset', async (req, res) => {
     let connection;
 
     if (!asset_symbol || !quantity || !price_per_unit) {
-        return res.status(400).json({ error: 'Missing required fields (asset_symbol, quantity, price_per_unit)' });
+        return res.status(400).json({ error: 'Missing required fields' });
     }
+
+    const trade_time = purchase_date ? new Date(purchase_date) : new Date();
 
     try {
         connection = await pool.getConnection();
@@ -355,10 +357,7 @@ app.post('/api/buy-asset', async (req, res) => {
             [asset_symbol]
         );
 
-        // 设置 trade_time：使用传入时间或默认当前时间
-        const trade_time = purchase_date ? new Date(purchase_date) : new Date();
-
-        // ====== 已存在资产：更新 portfolio + 新增 trade ======
+        // 如果资产已存在：更新 portfolio 表并插入 trades 和 cash_flow
         if (portfolioRows.length > 0) {
             const existing = portfolioRows[0];
             const totalQuantity = Number(existing.quantity) + Number(quantity);
@@ -372,16 +371,24 @@ app.post('/api/buy-asset', async (req, res) => {
                 [totalQuantity, newAvgPrice, asset_symbol]
             );
 
-            await connection.query(
+            // 插入 trades 记录
+            const [tradeResult] = await connection.query(
                 'INSERT INTO trades (asset_symbol, trade_time, asset_type, asset_name, trade_type, quantity, price_per_unit, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                 [asset_symbol, trade_time, existing.asset_type, existing.asset_name, 'buy', quantity, price_per_unit, 'Additional buy']
+            );
+            const tradeId = tradeResult.insertId;
+
+            // 插入 cash_flow 记录
+            await connection.query(
+                'INSERT INTO cash_flow (transaction_time, transaction_type, amount, related_trade_id, notes) VALUES (?, ?, ?, ?, ?)',
+                [trade_time, 'trade_settlement', -Number(quantity) * Number(price_per_unit), tradeId, `Cash used for ${asset_symbol} purchase`]
             );
 
             await connection.commit();
             return res.status(200).json({ message: 'Updated portfolio and recorded trade.' });
         }
 
-        // ====== 新资产：先验证 Yahoo Finance 符号是否合法 ======
+        // 否则从 Yahoo 验证 symbol 有效性
         const quote = await yahooFinance.quote(asset_symbol);
         if (!quote || !quote.symbol) {
             await connection.rollback();
@@ -394,14 +401,23 @@ app.post('/api/buy-asset', async (req, res) => {
         if (quoteType === 'ETF') resolvedType = 'etf';
         else if (quoteType === 'BOND') resolvedType = 'bond';
 
+        // 新增 portfolio 记录
         await connection.query(
             'INSERT INTO portfolio (asset_symbol, asset_type, asset_name, quantity, avg_purchase_price) VALUES (?, ?, ?, ?, ?)',
             [asset_symbol, resolvedType, asset_name, quantity, price_per_unit]
         );
 
-        await connection.query(
+        // 插入 trades 记录
+        const [tradeResult] = await connection.query(
             'INSERT INTO trades (asset_symbol, trade_time, asset_type, asset_name, trade_type, quantity, price_per_unit, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             [asset_symbol, trade_time, resolvedType, asset_name, 'buy', quantity, price_per_unit, 'Initial purchase']
+        );
+        const tradeId = tradeResult.insertId;
+
+        // 插入 cash_flow 记录
+        await connection.query(
+            'INSERT INTO cash_flow (transaction_time, transaction_type, amount, related_trade_id, notes) VALUES (?, ?, ?, ?, ?)',
+            [trade_time, 'trade_settlement', -Number(quantity) * Number(price_per_unit), tradeId, `Cash used for ${asset_symbol} purchase`]
         );
 
         await connection.commit();
