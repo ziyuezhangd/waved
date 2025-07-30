@@ -281,6 +281,63 @@ app.get('/api/daily-summary', async (req, res) => {
     }
 });
 
+// 获取完整资产信息 + 当前价格 + 总价值 + 涨跌幅
+app.get('/api/all-portfolio', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+
+        // 查询portfolio表中所有资产
+        const [rows] = await connection.query('SELECT * FROM portfolio');
+
+        // 遍历每一项，用yahoo finance查询当前价格并计算总值和performance
+        const enriched = await Promise.all(rows.map(async (row) => {
+            const { asset_symbol, quantity, avg_purchase_price, asset_type, asset_name } = row;
+
+            try {
+                const quote = await yahooFinance.quote(asset_symbol);
+                const current_price = quote?.regularMarketPrice ?? null;
+
+                let total_value = null;
+                let performance = null;
+
+                if (current_price !== null) {
+                    total_value = current_price * Number(quantity);
+                    const change_pct = ((current_price - Number(avg_purchase_price)) / Number(avg_purchase_price)) * 100;
+                    performance = `${change_pct >= 0 ? '+' : ''}${change_pct.toFixed(2)}%`;
+                }
+
+                return {
+                    asset_symbol,
+                    asset_type,
+                    asset_name,
+                    quantity,
+                    avg_purchase_price,
+                    current_price,
+                    total_value,
+                    performance
+                };
+            } catch (err) {
+                return {
+                    asset_symbol,
+                    asset_type,
+                    asset_name,
+                    quantity,
+                    avg_purchase_price,
+                    error: `Failed to fetch price: ${err.message}`
+                };
+            }
+        }));
+
+        res.json(enriched);
+    } catch (err) {
+        console.error('Error fetching enriched portfolio:', err);
+        res.status(500).json({ error: 'Server error.' });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
 // Start the Express server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

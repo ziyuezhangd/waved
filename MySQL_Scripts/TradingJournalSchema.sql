@@ -118,6 +118,26 @@ VALUES
 ('2023-10-28', 10120.50);
 
 */
+-- portfolio auto-generated definition
+create table portfolio
+(
+    asset_type     enum ('stock', 'etf', 'bond') not null,
+    asset_symbol   varchar(20)                   not null
+        primary key,
+    asset_name     varchar(255)                  not null,
+    quantity       decimal(18, 8)                not null,
+    avg_purchase_price decimal(18, 8)                not null
+);
+
+/*
+INSERT INTO portfolio (asset_symbol, asset_type, asset_name, quantity, avg_purchase_price) VALUES
+                                                                                           ('AAPL', 'stock', 'Apple Inc.', 50, 145.30),
+                                                                                           ('MSFT', 'stock', 'Microsoft Corp.', 30, 310.00),
+                                                                                           ('TSLA', 'stock', 'Tesla Inc.', 20, 245.50),
+                                                                                           ('VUG', 'etf', 'Vanguard Growth ETF', 40, 285.00),
+                                                                                           ('AGG', 'bond', 'iShares Core U.S. Aggregate Bond', 60, 98.50);
+ */
+
 
 -- =====================================================================
 -- End of Script
