@@ -140,7 +140,7 @@
     <i class="ri-bond-line text-green-600"></i>
     </div>
     </div>
-    <div class="text-2xl font-bold text-gray-900 mb-1" id="cashValue1">$54,892.35</div>
+    <div class="text-2xl font-bold text-gray-900 mb-1" id="cashValue1">$0.0</div>
     <div class="flex items-center justify-between">
     <span class="text-gray-500 text-sm">Available for investment</span>
     <button id="manageCashBtn" class="text-primary hover:text-primary/80 text-sm font-medium">
@@ -521,7 +521,7 @@
     });
     </script>
     <script id="manageCashControls">
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             const addAssetBtn = document.getElementById('addAssetBtn');
             const modal = document.getElementById('addAssetModal');
             const closeModal = document.getElementById('closeModal');
@@ -534,7 +534,9 @@
             const manageCashForm = document.getElementById('manageCashForm');
             const cashAmountInput = document.getElementById('cashAmount');
             let transactionType = 'deposit';
-            let currentCash = 54892.35;
+            const res1 = await fetch('/api/cash-amount');
+            const cash = await res1.json(); // 后端返回的是 { balance: 1000.00 }
+            let currentCash = await cash.balance || 0.00; // 确保有初始值
             const cashValueElement = document.getElementById('cashValue');
             manageCashBtn.addEventListener('click', function() {
                 cashModal.classList.remove('hidden');
@@ -739,8 +741,8 @@
     <script id="totalValueControls">
         async function updatePortfolioUI() {
             try {
-                const res = await fetch('/api/allAsset');
-                const { asset } = await res.json(); // 确保后端返回的是 { asset: { Stocks, ETFs, Bonds, Cash } }
+                const res = await fetch('/api/portfolio-summary');
+                const asset  = await res.json(); // 确保后端返回的是 { Stocks, ETFs, Bonds, Cash } 
 
                 const formatter = new Intl.NumberFormat('en-US', {
                     style: 'currency',
@@ -751,11 +753,11 @@
                 document.getElementById('stocksValue').textContent = formatter.format(asset.Stocks);
                 document.getElementById('etfsValue').textContent = formatter.format(asset.ETFs);
                 document.getElementById('bondsValue').textContent = formatter.format(asset.Bonds);
-                document.getElementById('cashValue').textContent = formatter.format(asset.Cash);
-                document.getElementById('cashValue1').textContent = formatter.format(asset.Cash);
+                document.getElementById('cashValue').textContent = formatter.format(Number(asset.Cash).toFixed(2));
+                document.getElementById('cashValue1').textContent = formatter.format(Number(asset.Cash).toFixed(2));
 
                 // 更新总资产
-                const total = asset.Stocks + asset.ETFs + asset.Bonds + asset.Cash;
+                const total = asset.Stocks + asset.ETFs + asset.Bonds + Number(asset.Cash);
                 document.getElementById('totalValue').textContent = formatter.format(total);
             } catch (err) {
                 console.error('Failed to fetch asset data:', err);
