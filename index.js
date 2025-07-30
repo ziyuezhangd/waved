@@ -507,6 +507,48 @@ app.post('/api/sell-asset', async (req, res) => {
   }
 });
 
+app.get('/api/get-cost', async (req, res) => {
+  let connection;
+  try {
+      connection = await pool.getConnection();
+
+      // SQL query to calculate the total cost for each asset type
+      const query = `
+          SELECT
+              asset_type,
+              SUM(quantity * avg_purchase_price) AS total_cost
+          FROM
+              portfolio
+          GROUP BY
+              asset_type;
+      `;
+
+      const [rows] = await connection.query(query);
+
+      // Initialize a result object with default values
+      const costs = {
+          stock: 0,
+          etf: 0,
+          bond: 0
+      };
+
+      // Populate the result object with data from the database
+      for (const row of rows) {
+          if (costs.hasOwnProperty(row.asset_type)) {
+              costs[row.asset_type] = parseFloat(row.total_cost);
+          }
+      }
+
+      res.json(costs);
+
+  } catch (err) {
+      console.error('Error in /api/get-cost:', err);
+      res.status(500).json({ error: 'Server error fetching asset costs.', details: err.message });
+  } finally {
+      if (connection) connection.release();
+  }
+});
+
 // Start the Express server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
