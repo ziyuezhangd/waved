@@ -71,54 +71,53 @@
             </div>
     <div class="bg-white rounded-xl p-6 border border-gray-200">
     <div class="flex items-center justify-between mb-4">
-    <h3 class="text-sm font-medium text-gray-600">Total Return</h3>
-    <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-lg">
-    <i class="ri-arrow-up-line text-blue-600"></i>
+        <h3 class="text-sm font-medium text-gray-600">Total Return</h3>
+        <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-lg">
+            <i class="ri-arrow-up-line text-blue-600"></i>
+        </div>
     </div>
-    </div>
-    <div class="text-2xl font-bold text-gray-900 mb-3">$127,843.20</div>
+    <div class="text-2xl font-bold text-gray-900 mb-3" id="totalReturn">$0.0</div>
     <div class="space-y-2">
-    <div class="flex justify-between items-center">
-    <div class="flex items-center gap-2">
-    <div class="w-2 h-2 rounded-full bg-[rgba(87,181,231,1)]"></div>
-    <span class="text-sm text-gray-600">Stocks</span>
-    </div>
-    <div class="text-sm">
-    <span class="font-medium text-gray-900">$58,234.50</span>
-    <span class="text-green-600 ml-2">+24.5%</span>
-    </div>
-    </div>
-    <div class="flex justify-between items-center">
-    <div class="flex items-center gap-2">
-    <div class="w-2 h-2 rounded-full bg-[rgba(141,211,199,1)]"></div>
-    <span class="text-sm text-gray-600">ETFs</span>
-    </div>
-    <div class="text-sm">
-    <span class="font-medium text-gray-900">$32,456.80</span>
-    <span class="text-green-600 ml-2">+15.8%</span>
-    </div>
-    </div>
-    <div class="flex justify-between items-center">
-    <div class="flex items-center gap-2">
-    <div class="w-2 h-2 rounded-full bg-[rgba(251,191,114,1)]"></div>
-    <span class="text-sm text-gray-600">Bonds</span>
-    </div>
-    <div class="text-sm">
-    <span class="font-medium text-gray-900">$28,890.45</span>
-    <span class="text-green-600 ml-2">+12.3%</span>
-    </div>
-    </div>
-    <div class="flex justify-between items-center">
-    <div class="flex items-center gap-2">
-    <div class="w-2 h-2 rounded-full bg-[rgba(252,141,98,1)]"></div>
-    <span class="text-sm text-gray-600">Cash</span>
-    </div>
-    <div class="text-sm">
-    <span class="font-medium text-gray-900">$8,261.45</span>
-    <span class="text-green-600 ml-2">+3.2%</span>
-    </div>
-    </div>
-    </div>
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <!-- <div class="w-2 h-2 rounded-full bg-[rgba(252,141,98,1)]"></div>
+                <span class="text-sm text-gray-600">Cash</span> -->
+            </div>
+            <div class="text-sm">
+                <!-- <span class="font-medium text-gray-900">$0.0</span> -->
+            </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-[rgba(87,181,231,1)]"></div>
+                    <span class="text-sm text-gray-600">Stocks</span>
+            </div>
+            <div class="text-sm">
+                <span class="font-medium text-gray-900" id="stocksReturn">$0.0</span>
+                <span class="text-green-600 ml-2" id="stocksReturnPercent">+24.5%</span>
+            </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-[rgba(141,211,199,1)]"></div>
+                <span class="text-sm text-gray-600">ETFs</span>
+            </div>
+            <div class="text-sm">
+                <span class="font-medium text-gray-900" id="etfsReturn">$0.0</span>
+                <span class="text-green-600 ml-2" id="etfsReturnPercent">+15.8%</span>
+            </div>
+        </div>
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-[rgba(251,191,114,1)]"></div>
+                <span class="text-sm text-gray-600">Bonds</span>
+            </div>
+            <div class="text-sm">
+                <span class="font-medium text-gray-900" id="bondsReturn">$0.0</span>
+                <span class="text-green-600 ml-2" id="bondsReturnPercent">+12.3%</span>
+            </div>
+        </div>
+        </div>
     </div>
     <div class="bg-white rounded-xl p-6 border border-gray-200">
     <div class="flex items-center justify-between mb-4">
@@ -172,10 +171,10 @@
     <h2 class="text-xl font-bold text-gray-900">Portfolio Holdings</h2>
     <div class="flex items-center space-x-4">
     <div class="relative">
-    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+    <!-- <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
     <i class="ri-search-line text-gray-400"></i>
     </div>
-    <input type="text" placeholder="Search assets..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+    <input type="text" placeholder="Search assets..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"> -->
     </div>
     <button id="addAssetBtn" class="bg-primary text-white px-4 py-2 rounded-button font-medium whitespace-nowrap !rounded-button">
     <i class="ri-add-line mr-2"></i>Add Asset
@@ -739,7 +738,7 @@
         });
     </script>
     <script id="totalValueControls">
-        async function updatePortfolioUI() {
+        async function updateTotalValue() {
             try {
                 const res = await fetch('/api/portfolio-summary');
                 const asset  = await res.json(); // 确保后端返回的是 { Stocks, ETFs, Bonds, Cash } 
@@ -764,7 +763,58 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', updatePortfolioUI);
+        window.addEventListener('DOMContentLoaded', updateTotalValue);
+    </script>
+    <script id="totalReturnControls">
+        async function updateTotalReturn() {
+            try {
+                const res = await fetch('/api/allReturn');
+                const { returns } = await res.json(); // 确保后端返回的是 { returns: { Stocks, ETFs, Bonds } }
+                const res1 = await fetch('/api/allAsset');
+                const { asset } = await res1.json();
+
+                const formatter = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                });
+
+                // 计算每类的百分比
+                const stocksPercent = (returns.Stocks / asset.Stocks) * 100;
+                const etfsPercent = (returns.ETFs / asset.ETFs) * 100;
+                const bondsPercent = (returns.Bonds / asset.Bonds) * 100;
+
+                // 设置函数：更新百分比文本和颜色
+                function setPercent(id, percent) {
+                    const el = document.getElementById(id);
+                    const sign = percent > 0 ? '+' : percent < 0 ? '-' : '';
+                    el.textContent = sign + Math.abs(percent).toFixed(2) + '%';
+
+                    el.classList.remove('text-green-600', 'text-red-600');
+                    if (percent > 0) {
+                        el.classList.add('text-green-600');
+                    } else if (percent < 0) {
+                        el.classList.add('text-red-600');
+                    } else {
+                        el.classList.add('text-gray-600'); // 0 时灰色，可选
+                    }
+                }
+
+                // 更新资产分类的数值
+                document.getElementById('stocksReturn').textContent = formatter.format(returns.Stocks);
+                document.getElementById('etfsReturn').textContent = formatter.format(returns.ETFs);
+                document.getElementById('bondsReturn').textContent = formatter.format(returns.Bonds);
+                setPercent('stocksReturnPercent', stocksPercent);
+                setPercent('etfsReturnPercent', etfsPercent);
+                setPercent('bondsReturnPercent', bondsPercent);
+
+                // 更新总资产
+                const total = returns.Stocks + returns.ETFs + returns.Bonds;
+                document.getElementById('totalReturn').textContent = formatter.format(total);
+            } catch (err) {
+                console.error('Failed to fetch return data:', err);
+            }
+        }
+        window.addEventListener('DOMContentLoaded', updateTotalReturn);
     </script>
     <script id="buySellControls">
         function createTradeModal() {

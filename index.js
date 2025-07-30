@@ -7,7 +7,8 @@ import { pool } from './connectionPool.js'; // Import the connection pool
 import { getStockData } from './services/stock1.js';
 
 
-import { getAllAssets, getAllPortfolio } from "./services/mockDB.js";
+import { getAllAssets, getAllPortfolio, getAllReturns } from "./services/mockDB.js";
+// import { mysqlConnection } from './mysql.js'; // Import the
 import yahooFinance from 'yahoo-finance2';
 // import mysql from 'mysql2'; // Import mysql2
 
@@ -69,6 +70,15 @@ app.get('/api/allAsset', async (req, res) => {
   try {
     const asset = await getAllAssets();
     res.json({asset})
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch asset data' });
+  }
+});
+
+app.get('/api/allReturn', async (req, res) => {
+  try {
+    const returns = await getAllReturns();
+    res.json({returns})
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch asset data' });
   }
