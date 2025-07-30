@@ -25,9 +25,6 @@
     </div>
     </div>
     <div class="flex items-center space-x-4">
-    <!-- <button class="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-primary">
-    <i class="ri-notification-line ri-lg"></i>
-    </button> -->
     <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
     <span class="text-white text-sm font-medium">U</span>
     </div>
@@ -221,7 +218,7 @@
     </table>
     </div>
     </div>
-    <div class="mt-8 flex justify-center space-x-4">
+    <!-- <div class="mt-8 flex justify-center space-x-4">
     <button class="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
     <i class="ri-download-line mr-2"></i>Export Data
     </button>
@@ -231,7 +228,7 @@
     <button class="bg-primary text-white px-6 py-3 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
     <i class="ri-refresh-line mr-2"></i>Rebalance Portfolio
     </button>
-    </div>
+    </div> -->
     </main>
     <div id="manageCashModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
     <div class="flex items-center justify-center min-h-screen p-4">
@@ -270,51 +267,54 @@
     </div>
     </div>
     <div id="addAssetModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-xl max-w-md w-full p-6">
-    <div class="flex items-center justify-between mb-6">
-    <h3 class="text-lg font-bold text-gray-900">Add New Asset</h3>
-    <button id="closeModal" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
-    <i class="ri-close-line"></i>
-    </button>
-    </div>
-    <form class="space-y-4">
-    <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Asset Type</label>
-    <div class="relative">
-    <button type="button" class="w-full px-3 py-2 border border-gray-300 rounded-button text-left text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary pr-8">
-    Select asset type
-    <i class="ri-arrow-down-s-line absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-    </button>
-    </div>
-    </div>
-    <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Asset Symbol</label>
-    <input type="text" placeholder="e.g., AAPL" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-    </div>
-    <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
-    <input type="number" placeholder="Enter quantity" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-    </div>
-    <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Purchase Price</label>
-    <input type="number" step="0.01" placeholder="Enter purchase price" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-    </div>
-    <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Purchase Date</label>
-    <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-    </div>
-    <div class="flex space-x-3 pt-4">
-    <button type="button" id="cancelBtn" class="flex-1 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
-    Cancel
-    </button>
-    <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
-    Add Asset
-    </button>
-    </div>
-    </form>
-    </div>
-    </div>
+        <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+        <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-bold text-gray-900" id="openAddAsset">Add New Asset</h3>
+        <button id="closeModal" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+        <i class="ri-close-line"></i>
+        </button>
+        </div>
+        <form class="space-y-4">
+        <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Asset Type</label>
+        <div class="relative">
+        <select id="asset-type" class="appearance-none w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+            <option value="" disabled selected>Select asset type</option>
+            <option value="stock">Stock</option>
+            <option value="etf">ETF</option>
+            <option value="bond">Bond</option>
+        </select>
+        <i class="ri-arrow-down-s-line absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+        </div>
+        </div>
+        <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Asset Symbol</label>
+        <input type="text" placeholder="e.g., AAPL" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+        </div>
+        <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+        <input type="number" placeholder="Enter quantity" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+        </div>
+        <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Purchase Price</label>
+        <input type="number" step="0.01" placeholder="Enter purchase price" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+        </div>
+        <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Purchase Date</label>
+        <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+        </div>
+        <div class="flex space-x-3 pt-4">
+        <button type="button" id="cancelBtn" class="flex-1 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
+        Cancel
+        </button>
+        <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
+        Submit
+        </button>
+        </div>
+        </form>
+        </div>
+        </div>
     </div>
     <script id="chartInit">
     document.addEventListener('DOMContentLoaded', function() {
@@ -690,7 +690,7 @@
             });
         });
     </script>
-    <script>
+    <script id="totalValueControls">
         async function updatePortfolioUI() {
             try {
                 const res = await fetch('/api/allAsset');
@@ -718,7 +718,7 @@
 
         window.addEventListener('DOMContentLoaded', updatePortfolioUI);
     </script>
-    <script>
+    <script id="buySellControls">
         function createTradeModal() {
             const modalHTML = `
                 <div id="trade-modal" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden">
@@ -794,5 +794,45 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById("addAssetModal");
+            const openBtn = document.getElementById("openAddAsset"); // 你的“Add Asset”按钮要有这个id
+            const closeBtn = document.getElementById("closeModal");
+            const cancelBtn = document.getElementById("cancelBtn");
+            const form = modal.querySelector("form");
+
+            // 打开弹窗
+            openBtn.addEventListener("click", () => {
+                modal.classList.remove("hidden");
+            });
+
+            // 关闭弹窗
+            function closeModal() {
+                modal.classList.add("hidden");
+            }
+            closeBtn.addEventListener("click", closeModal);
+            cancelBtn.addEventListener("click", closeModal);
+
+            // 提交表单
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const assetType = document.getElementById("asset-type").value;
+                const assetSymbol = form.querySelector("input[placeholder='e.g., AAPL']").value.trim();
+                const quantity = parseInt(form.querySelector("input[placeholder='Enter quantity']").value);
+                const purchasePrice = parseFloat(form.querySelector("input[placeholder='Enter purchase price']").value);
+                const purchaseDate = form.querySelector("input[type='date']").value;
+
+                const payload = { assetType, assetSymbol, quantity, purchasePrice, purchaseDate };
+
+                // 模拟请求后端
+                console.log("模拟提交：", payload);
+
+                closeModal();
+            });
+        });
+    </script>
+
 </body>
 </html>
