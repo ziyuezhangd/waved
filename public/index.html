@@ -203,7 +203,7 @@
     <tr>
     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Price</th>
+    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">AVG Purchase Price</th>
     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Price</th>
     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Value</th>
     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Performance</th>
@@ -228,91 +228,96 @@
     </div> -->
     </main>
     <div id="manageCashModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-xl max-w-md w-full p-6">
-    <div class="flex items-center justify-between mb-6">
-    <h3 class="text-lg font-bold text-gray-900">Manage Cash</h3>
-    <button class="closeCashModal w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
-    <i class="ri-close-line"></i>
-    </button>
-    </div>
-    <form id="manageCashForm" class="space-y-4">
-    <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Transaction Type</label>
-    <div class="flex space-x-4 mb-4">
-    <button type="button" id="depositBtn" class="flex-1 py-2 px-4 rounded-button border text-sm font-medium bg-primary text-white">Deposit</button>
-    <button type="button" id="withdrawBtn" class="flex-1 py-2 px-4 rounded-button border text-sm font-medium text-gray-700">Withdraw</button>
-    </div>
-    </div>
-    <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
-    <div class="relative">
-    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-    <input type="number" id="cashAmount" min="0" step="0.01" placeholder="Enter amount" class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-    </div>
-    </div>
-    <div class="flex space-x-3 pt-4">
-    <button type="button" class="closeCashModal flex-1 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
-    Cancel
-    </button>
-    <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
-    Confirm
-    </button>
-    </div>
-    </form>
-    </div>
-    </div>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-md w-full p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-gray-900">Manage Cash</h3>
+                    <button class="closeCashModal w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+                <form id="manageCashForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Transaction Type</label>
+                        <div class="flex space-x-4 mb-4">
+                            <button type="button" id="depositBtn" class="flex-1 py-2 px-4 rounded-button border text-sm font-medium bg-primary text-white">
+                                Deposit
+                            </button>
+                            <button type="button" id="withdrawBtn" class="flex-1 py-2 px-4 rounded-button border text-sm font-medium text-gray-700">
+                                Withdraw
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                            <input type="number" id="cashAmount" min="0" step="0.01" placeholder="Enter amount" class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                        </div>
+                    </div>
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" class="closeCashModal flex-1 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
+                            Cancel
+                        </button>
+                        <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
+                            Confirm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     <div id="addAssetModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-xl max-w-md w-full p-6">
-        <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-bold text-gray-900" id="openAddAsset">Add New Asset</h3>
-        <button id="closeModal" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
-        <i class="ri-close-line"></i>
-        </button>
-        </div>
-        <form class="space-y-4">
-        <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Asset Type</label>
-        <div class="relative">
-        <select id="asset-type" class="appearance-none w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-            <option value="" disabled selected>Select asset type</option>
-            <option value="stock">Stock</option>
-            <option value="etf">ETF</option>
-            <option value="bond">Bond</option>
-        </select>
-        <i class="ri-arrow-down-s-line absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-        </div>
-        </div>
-        <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Asset Symbol</label>
-        <input type="text" placeholder="e.g., AAPL" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-        </div>
-        <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
-        <input type="number" placeholder="Enter quantity" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-        </div>
-        <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Purchase Price</label>
-        <input type="number" step="0.01" placeholder="Enter purchase price" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-        </div>
-        <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Purchase Date</label>
-        <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
-        </div>
-        <div class="flex space-x-3 pt-4">
-        <button type="button" id="cancelBtn" class="flex-1 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
-        Cancel
-        </button>
-        <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
-        Submit
-        </button>
-        </div>
-        </form>
-        </div>
+            <div class="bg-white rounded-xl max-w-md w-full p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-gray-900" id="openAddAsset">Add New Asset</h3>
+                    <button id="closeModal" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Asset Type</label>
+                        <div class="relative">
+                            <select id="asset-type" class="appearance-none w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                                <option value="" disabled selected>Select asset type</option>
+                                <option value="stock">Stock</option>
+                                <option value="etf">ETF</option>
+                                <option value="bond">Bond</option>
+                            </select>
+                            <i class="ri-arrow-down-s-line absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Asset Symbol</label>
+                        <input type="text" placeholder="e.g., AAPL" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                        <input type="number" placeholder="Enter quantity" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Purchase Price</label>
+                        <input type="number" step="0.01" placeholder="Enter purchase price" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Purchase Date</label>
+                        <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-button text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    </div>
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" id="cancelBtn" class="flex-1 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-button font-medium hover:bg-gray-50 !rounded-button whitespace-nowrap">
+                        Cancel
+                        </button>
+                        <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-button font-medium hover:bg-primary/90 !rounded-button whitespace-nowrap">
+                        Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+    <!-- Below are all scripts -->
     <script id="chartInit">
     document.addEventListener('DOMContentLoaded', function() {
     const portfolioChart = echarts.init(document.getElementById('portfolioChart'));
@@ -515,103 +520,112 @@
         });
     });
     </script>
-    <script id="modalControls">
-    document.addEventListener('DOMContentLoaded', function() {
-    const addAssetBtn = document.getElementById('addAssetBtn');
-    const modal = document.getElementById('addAssetModal');
-    const closeModal = document.getElementById('closeModal');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const manageCashBtn = document.getElementById('manageCashBtn');
-    const cashModal = document.getElementById('manageCashModal');
-    const closeCashBtns = document.querySelectorAll('.closeCashModal');
-    const depositBtn = document.getElementById('depositBtn');
-    const withdrawBtn = document.getElementById('withdrawBtn');
-    const manageCashForm = document.getElementById('manageCashForm');
-    const cashAmountInput = document.getElementById('cashAmount');
-    let transactionType = 'deposit';
-    let currentCash = 54892.35;
-    const cashValueElement = document.getElementById('cashValue');
-    manageCashBtn.addEventListener('click', function() {
-    cashModal.classList.remove('hidden');
-    });
-    closeCashBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-    cashModal.classList.add('hidden');
-    resetCashForm();
-    });
-    });
-    cashModal.addEventListener('click', function(e) {
-    if (e.target === cashModal) {
-    cashModal.classList.add('hidden');
-    resetCashForm();
-    }
-    });
-    depositBtn.addEventListener('click', function() {
-    transactionType = 'deposit';
-    depositBtn.classList.add('bg-primary', 'text-white');
-    depositBtn.classList.remove('text-gray-700');
-    withdrawBtn.classList.remove('bg-primary', 'text-white');
-    withdrawBtn.classList.add('text-gray-700');
-    });
-    withdrawBtn.addEventListener('click', function() {
-    transactionType = 'withdraw';
-    withdrawBtn.classList.add('bg-primary', 'text-white');
-    withdrawBtn.classList.remove('text-gray-700');
-    depositBtn.classList.remove('bg-primary', 'text-white');
-    depositBtn.classList.add('text-gray-700');
-    });
-    manageCashForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const amount = parseFloat(cashAmountInput.value);
-    if (isNaN(amount) || amount <= 0) {
-    cashAmountInput.classList.add('border-red-500');
-    return;
-    }
-    if (transactionType === 'withdraw' && amount > currentCash) {
-    cashAmountInput.classList.add('border-red-500');
-    return;
-    }
-    currentCash = transactionType === 'deposit' ?
-    currentCash + amount :
-    currentCash - amount;
-    cashValueElement.textContent = `$${currentCash.toFixed(2)}`;
-    updateCashInChart();
-    cashModal.classList.add('hidden');
-    resetCashForm();
-    });
-    function resetCashForm() {
-    cashAmountInput.value = '';
-    cashAmountInput.classList.remove('border-red-500');
-    transactionType = 'deposit';
-    depositBtn.classList.add('bg-primary', 'text-white');
-    depositBtn.classList.remove('text-gray-700');
-    withdrawBtn.classList.remove('bg-primary', 'text-white');
-    withdrawBtn.classList.add('text-gray-700');
-    }
-    function updateCashInChart() {
-    const portfolioChart = echarts.getInstanceByDom(document.getElementById('portfolioChart'));
-    const option = portfolioChart.getOption();
-    const lastCashValue = option.series[4].data[option.series[4].data.length - 1];
-    option.series[4].data[option.series[4].data.length - 1] = currentCash;
-    option.series[0].data[option.series[0].data.length - 1] =
-    option.series[0].data[option.series[0].data.length - 1] - lastCashValue + currentCash;
-    portfolioChart.setOption(option);
-    }
-    addAssetBtn.addEventListener('click', function() {
-    modal.classList.remove('hidden');
-    });
-    closeModal.addEventListener('click', function() {
-    modal.classList.add('hidden');
-    });
-    cancelBtn.addEventListener('click', function() {
-    modal.classList.add('hidden');
-    });
-    modal.addEventListener('click', function(e) {
-    if (e.target === modal) {
-    modal.classList.add('hidden');
-    }
-    });
-    });
+    <script id="manageCashControls">
+        document.addEventListener('DOMContentLoaded', function() {
+            const addAssetBtn = document.getElementById('addAssetBtn');
+            const modal = document.getElementById('addAssetModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const manageCashBtn = document.getElementById('manageCashBtn');
+            const cashModal = document.getElementById('manageCashModal');
+            const closeCashBtns = document.querySelectorAll('.closeCashModal');
+            const depositBtn = document.getElementById('depositBtn');
+            const withdrawBtn = document.getElementById('withdrawBtn');
+            const manageCashForm = document.getElementById('manageCashForm');
+            const cashAmountInput = document.getElementById('cashAmount');
+            let transactionType = 'deposit';
+            let currentCash = 54892.35;
+            const cashValueElement = document.getElementById('cashValue');
+            manageCashBtn.addEventListener('click', function() {
+                cashModal.classList.remove('hidden');
+            });
+            closeCashBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    cashModal.classList.add('hidden');
+                    resetCashForm();
+                });
+            });
+            cashModal.addEventListener('click', function(e) {
+                if (e.target === cashModal) {
+                    cashModal.classList.add('hidden');
+                    resetCashForm();
+                }
+            });
+            depositBtn.addEventListener('click', function() {
+                transactionType = 'deposit';
+                depositBtn.classList.add('bg-primary', 'text-white');
+                depositBtn.classList.remove('text-gray-700');
+                withdrawBtn.classList.remove('bg-primary', 'text-white');
+                withdrawBtn.classList.add('text-gray-700');
+            });
+            withdrawBtn.addEventListener('click', function() {
+                transactionType = 'withdraw';
+                withdrawBtn.classList.add('bg-primary', 'text-white');
+                withdrawBtn.classList.remove('text-gray-700');
+                depositBtn.classList.remove('bg-primary', 'text-white');
+                depositBtn.classList.add('text-gray-700');
+            });
+            manageCashForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const amount = parseFloat(cashAmountInput.value);
+                if (isNaN(amount) || amount <= 0) {
+                    cashAmountInput.classList.add('border-red-500');
+                    return;
+                }
+                if (transactionType === 'withdraw' && amount > currentCash) {
+                    cashAmountInput.classList.add('border-red-500');
+                    return;
+                }
+                currentCash = transactionType === 'deposit' ? currentCash + amount : currentCash - amount;
+                cashValueElement.textContent = `$${currentCash.toFixed(2)}`;
+                // updateCashInChart();
+
+                // 模拟后端调用
+                console.log("Transaction Type:", transactionType, "Amount:", amount);
+                // await fetch("/api/manage-cash", {
+                //     method: "POST",
+                //     headers: { "Content-Type": "application/json" },
+                //     body: JSON.stringify({ transactionType, amount })
+                // });
+
+                cashModal.classList.add('hidden');
+                resetCashForm();
+            });
+            // 重置现金表单
+            function resetCashForm() {
+                cashAmountInput.value = '';
+                cashAmountInput.classList.remove('border-red-500');
+                transactionType = 'deposit';
+                depositBtn.classList.add('bg-primary', 'text-white');
+                depositBtn.classList.remove('text-gray-700');
+                withdrawBtn.classList.remove('bg-primary', 'text-white');
+                withdrawBtn.classList.add('text-gray-700');
+            }
+            // 更新现金在投资组合图表中的显示
+            // function updateCashInChart() {
+            //     const portfolioChart = echarts.getInstanceByDom(document.getElementById('portfolioChart'));
+            //     const option = portfolioChart.getOption();
+            //     const lastCashValue = option.series[4].data[option.series[4].data.length - 1];
+            //     option.series[4].data[option.series[4].data.length - 1] = currentCash;
+            //     option.series[0].data[option.series[0].data.length - 1] =
+            //     option.series[0].data[option.series[0].data.length - 1] - lastCashValue + currentCash;
+            //     portfolioChart.setOption(option);
+            // }
+            addAssetBtn.addEventListener('click', function() {
+                modal.classList.remove('hidden');
+            });
+            closeModal.addEventListener('click', function() {
+                modal.classList.add('hidden');
+            });
+            cancelBtn.addEventListener('click', function() {
+                modal.classList.add('hidden');
+            });
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
     </script>
     <script id="portfolioTableControls">
         // 加载投资组合表格数据
@@ -850,10 +864,10 @@
             });
         });
     </script>
-    <script>
+    <script id="addAssetControls">
         document.addEventListener("DOMContentLoaded", () => {
             const modal = document.getElementById("addAssetModal");
-            const openBtn = document.getElementById("openAddAsset"); // 你的“Add Asset”按钮要有这个id
+            const openBtn = document.getElementById("openAddAsset");
             const closeBtn = document.getElementById("closeModal");
             const cancelBtn = document.getElementById("cancelBtn");
             const form = modal.querySelector("form");
@@ -889,6 +903,5 @@
             });
         });
     </script>
-
 </body>
 </html>
