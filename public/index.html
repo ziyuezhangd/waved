@@ -414,7 +414,7 @@
 
 
     async function fetchChartData(range) {
-      const res = await fetch(`/api/portfolio/performance?range=1D`);
+      const res = await fetch(`/api/portfolio/performance?range=${range}`);
       return await res.json(); // {xAxis: [...], series: [[...], [...], ...]}
       
     }
