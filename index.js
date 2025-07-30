@@ -8,7 +8,6 @@ import { getStockData } from './services/stock1.js';
 
 
 import { getAllAssets, getAllPortfolio } from "./services/mockDB.js";
-// import { mysqlConnection } from './mysql.js'; // Import the
 import yahooFinance from 'yahoo-finance2';
 // import mysql from 'mysql2'; // Import mysql2
 
