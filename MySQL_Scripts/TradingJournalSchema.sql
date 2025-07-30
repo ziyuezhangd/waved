@@ -2,8 +2,7 @@
 -- Trading Journal Database Setup
 --
 -- This script creates a database and tables for tracking personal
--- trades across various asset classes (Stocks, ETFs, Bonds) and
--- managing cash flow.
+-- trades, managing cash flow, and recording daily asset totals.
 --
 -- To use:
 -- 1. Open MySQL Workbench.
@@ -63,6 +62,20 @@ CREATE TABLE `cash_flow` (
 
 
 -- =====================================================================
+-- Daily Asset Summary Table
+--
+-- This table stores a snapshot of the total asset value at the end
+-- of each day. This is useful for tracking portfolio growth over time.
+-- =====================================================================
+CREATE TABLE `daily_asset_summary` (
+    `summary_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `record_date` DATE NOT NULL UNIQUE COMMENT 'The date of the asset summary, ensuring one record per day.',
+    `total_asset_value` DECIMAL(18, 4) NOT NULL COMMENT 'The total value of all assets (stocks, ETFs, bonds, and cash) on this date.',
+    INDEX `idx_record_date` (`record_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Records the total portfolio value on a daily basis.';
+
+
+-- =====================================================================
 -- Example Data Insertion (Optional)
 --
 -- You can uncomment and run these lines to see how the tables work
@@ -95,6 +108,14 @@ SET @last_trade_id = LAST_INSERT_ID();
 
 INSERT INTO `cash_flow` (transaction_time, transaction_type, amount, related_trade_id, notes)
 VALUES ('2023-11-20 14:15:00', 'trade_settlement', 2253.75, @last_trade_id, 'Cash received from SPY sale');
+
+
+-- Example 4: Recording end-of-day asset totals
+INSERT INTO `daily_asset_summary` (record_date, total_asset_value)
+VALUES
+('2023-10-26', 10000.00),
+('2023-10-27', 10150.25),
+('2023-10-28', 10120.50);
 
 */
 
