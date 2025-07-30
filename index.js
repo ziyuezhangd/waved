@@ -391,10 +391,10 @@ app.post('/api/buy-asset', async (req, res) => {
         }
 
         const asset_name = quote.longName || quote.shortName || asset_symbol;
-
-// 信任用户输入，但仅限合法 asset_type
-        const allowedTypes = ['stock', 'etf', 'bond'];
-        let resolvedType = allowedTypes.includes(asset_type.toLowerCase()) ? asset_type.toLowerCase() : 'stock';
+        const quoteType = quote.quoteType;
+        let resolvedType = 'stock';
+        if (quoteType === 'ETF') resolvedType = 'etf';
+        else if (quoteType === 'BOND') resolvedType = 'bond';
 
         // 插入 portfolio
         await connection.query(
