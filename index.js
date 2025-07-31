@@ -672,7 +672,7 @@ app.post('/api/cash-flow', async (req, res) => {
 });
 
 
-app.get('/api/history_date/:symbol', async (req, res) => {
+app.get('/api/history_data/:symbol', async (req, res) => {
   const symbol = req.params.symbol;
 
   let connection;
