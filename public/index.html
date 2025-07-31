@@ -886,8 +886,15 @@
                     quantity,
                     price
                 };
+                console.log(payload);
 
                 try {
+                    let url = '/api/';
+                    if (payload.action === "buy") {
+                        url += 'buy-asset';
+                    } else {
+                        url += 'sell-asset';
+                    }
                     // const res = await fetch("/api/trade", {
                     //     method: "POST",
                     //     headers: { "Content-Type": "application/json" },
@@ -941,18 +948,19 @@
                     "purchase_date": purchaseDate 
                 };
                 console.log(payload);
+
                 // 请求后端
-                // try {
-                //     const res = await fetch("/api/buy-asset", {
-                //         method: "POST",
-                //         headers: { "Content-Type": "application/json" },
-                //         body: JSON.stringify(payload)
-                //     });
-                //     const result = await res.json();
-                //     console.log("Trade success:", result);
-                // } catch (err) {
-                //     console.error("Trade failed:", err);
-                // }
+                try {
+                    const res = await fetch("/api/buy-asset", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await res.json();
+                    console.log("Trade success:", result);
+                } catch (err) {
+                    console.error("Trade failed:", err);
+                }
 
                 closeModal();
             });
