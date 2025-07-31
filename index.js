@@ -50,20 +50,28 @@ app.get('/api/portfolio/performance', async (req, res) => {
         `SELECT asset_type, trade_time, quantity, price_per_unit
          FROM trades
          WHERE DATE(trade_time) = CURDATE()
-         ORDER BY trade_time ASC`
-      );
+         ORDER BY trade_time ASC`      
+         );
+      if (!trades.length) {
+        // 没有交易数据时返回空
+        return res.json({ xAxis: [], series: [] });
+        }
       // 按小时聚合
       const hours = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
       const assetTypes = [...new Set(trades.map(t => t.asset_type))];
       const series = assetTypes.map(type => ({
-        name: type.charAt(0).toUpperCase() + type.slice(1),
-        data: hours.map(hour => {
-          // 统计到该小时为止的持仓
-          const filtered = trades.filter(t => t.asset_type === type && t.trade_time.slice(11, 13) <= hour.slice(0, 2));
-          const total = filtered.reduce((sum, t) => sum + t.quantity * t.price_per_unit, 0);
-          return Number(total.toFixed(2));
-        })
-      }));
+  name: type.charAt(0).toUpperCase() + type.slice(1),
+  data: hours.map(hour => {
+    // 统计到该小时为止的持仓
+      const hourNum = Number(hour.slice(0, 2));
+      const filtered = trades.filter(t =>
+          t.asset_type === type &&
+          new Date(t.trade_time).getHours() <= hourNum
+        );
+        const total = filtered.reduce((sum, t) => sum + t.quantity * t.price_per_unit, 0);
+        return Number(total.toFixed(2));
+    })
+    }));
       res.json({ xAxis: hours, series });
     } else if (range === '1W' || range === '1M') {
       // 1W/1M: 用 portfolio 表，直接用当前持仓和均价估算每天的产品价值
