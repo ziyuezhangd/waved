@@ -46,10 +46,10 @@
                     </div>
                 </div>
                 <div id="totalValue" class="text-2xl font-bold text-gray-900 mb-1">$0.00</div>
-                <div class="flex items-center text-sm mb-2">
+                <!-- <div class="flex items-center text-sm mb-2">
                     <span class="text-green-600 font-medium">+2.34%</span>
                     <span class="text-gray-500 ml-1">from last month</span>
-                </div>
+                </div> -->
                 <div class="space-y-1.5">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500">Stocks</span>
@@ -94,7 +94,7 @@
             </div>
             <div class="text-sm">
                 <span class="font-medium text-gray-900" id="stocksReturn">$0.0</span>
-                <span class="text-green-600 ml-2" id="stocksReturnPercent">+24.5%</span>
+                <span class="text-green-600 ml-2" id="stocksReturnPercent">+0.0%</span>
             </div>
         </div>
         <div class="flex justify-between items-center">
@@ -104,7 +104,7 @@
             </div>
             <div class="text-sm">
                 <span class="font-medium text-gray-900" id="etfsReturn">$0.0</span>
-                <span class="text-green-600 ml-2" id="etfsReturnPercent">+15.8%</span>
+                <span class="text-green-600 ml-2" id="etfsReturnPercent">+0.0%</span>
             </div>
         </div>
         <div class="flex justify-between items-center">
@@ -114,7 +114,7 @@
             </div>
             <div class="text-sm">
                 <span class="font-medium text-gray-900" id="bondsReturn">$0.0</span>
-                <span class="text-green-600 ml-2" id="bondsReturnPercent">+12.3%</span>
+                <span class="text-green-600 ml-2" id="bondsReturnPercent">+0.0%</span>
             </div>
         </div>
         </div>
@@ -150,15 +150,15 @@
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
     <div class="lg:col-span-2 bg-white rounded-xl p-6 border border-gray-200">
-    <div class="flex items-center justify-between mb-6">
-    <h2 class="text-xl font-bold text-gray-900">Portfolio Performance</h2>
-    <div class="flex space-x-2">
-    <button class="px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-button">1D</button>
-    <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1W</button>
-    <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1M</button>
-    </div>
-    </div>
-    <div id="portfolioChart" style="height: 300px;"></div>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-gray-900">Stock Performance</h2>
+            <div class="flex space-x-2">
+                <button class="px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-button">AAPL</button>
+                <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">AMZN</button>
+                <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">MSFT</button>
+            </div>
+        </div>
+        <div id="portfolioChart" style="height: 300px;"></div>
     </div>
     <div class="bg-white rounded-xl p-6 border border-gray-200">
     <h2 class="text-xl font-bold text-gray-900 mb-6">Asset Allocation</h2>
