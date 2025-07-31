@@ -462,8 +462,8 @@
         // 动态获取资产分布数据并绘制饼图
         async function drawAllocationChart() {
             try {
-                const res = await fetch('/api/allAsset');
-                const { asset } = await res.json();
+                const res = await fetch('/api/portfolio-summary');
+                const asset  = await res.json();
 
                 const data = [
                     { value: asset.Stocks, name: 'Stocks', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
