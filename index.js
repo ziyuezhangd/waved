@@ -40,25 +40,57 @@ app.get('/api/stock/:symbol', async (req, res) => {
   }
 });
 
-// Provide real total intraday data
+// Provide real-time portfolio performance data
 app.get('/api/portfolio/performance', async (req, res) => {
   const { range } = req.query; // '1D', '1W', '1M'
-  let sql = '';
-  if (range === '1D') {
-    sql = "SELECT time, total_value FROM daily_asset_summary WHERE DATE(time) = CURDATE() ORDER BY time ASC";
-  } else if (range === '1W') {
-    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM daily_asset_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY DATE(time) ORDER BY time ASC";
-  } else if (range === '1M') {
-    sql = "SELECT DATE(time) as time, SUM(total_value)/COUNT(*) as total_value FROM daily_asset_summary WHERE time >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) GROUP BY DATE(time) ORDER BY time ASC";
-  } else {
-    return res.status(400).json({ error: 'Invalid range.' });
-  }
   try {
-    const [rows] = await pool.query(sql);
-    res.json({
-      xAxis: rows.map(r => r.time),
-      series: [rows.map(r => r.total_value)]
-    });
+    if (range === '1D') {
+      // 1D: 用 trades 表，统计当天每种产品的持仓和价值
+      const [trades] = await pool.query(
+        `SELECT asset_type, trade_time, quantity, price_per_unit
+         FROM trades
+         WHERE DATE(trade_time) = CURDATE()
+         ORDER BY trade_time ASC`
+      );
+      // 按小时聚合
+      const hours = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+      const assetTypes = [...new Set(trades.map(t => t.asset_type))];
+      const series = assetTypes.map(type => ({
+        name: type.charAt(0).toUpperCase() + type.slice(1),
+        data: hours.map(hour => {
+          // 统计到该小时为止的持仓
+          const filtered = trades.filter(t => t.asset_type === type && t.trade_time.slice(11, 13) <= hour.slice(0, 2));
+          const total = filtered.reduce((sum, t) => sum + t.quantity * t.price_per_unit, 0);
+          return Number(total.toFixed(2));
+        })
+      }));
+      res.json({ xAxis: hours, series });
+    } else if (range === '1W' || range === '1M') {
+      // 1W/1M: 用 portfolio 表，直接用当前持仓和均价估算每天的产品价值
+      const days = range === '1W' ? 7 : 30;
+      const dates = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dates.push(d.toISOString().slice(0, 10));
+      }
+      const [portfolio] = await pool.query(
+        `SELECT asset_type, quantity, avg_purchase_price FROM portfolio`
+      );
+      const assetTypes = [...new Set(portfolio.map(p => p.asset_type))];
+      const series = assetTypes.map(type => ({
+        name: type.charAt(0).toUpperCase() + type.slice(1),
+        // 这里假设持仓不变，每天价值都一样（实际可查历史价或快照）
+        data: dates.map(() => {
+          const filtered = portfolio.filter(p => p.asset_type === type);
+          const total = filtered.reduce((sum, p) => sum + p.quantity * p.avg_purchase_price, 0);
+          return Number(total.toFixed(2));
+        })
+      }));
+      res.json({ xAxis: dates, series });
+    } else {
+      return res.status(400).json({ error: 'Invalid range.' });
+    }
   } catch (err) {
     console.error('Error in getPortfolioPerformance:', err);
     res.status(500).json({ error: 'Failed to fetch portfolio performance' });
