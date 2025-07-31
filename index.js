@@ -701,6 +701,41 @@ app.post('/api/cash-flow', async (req, res) => {
     }
 });
 
+
+app.get('/api/history_date/:symbol', async (req, res) => {
+  const symbol = req.params.symbol;
+
+  let connection;
+  try {
+    connection = await pool.getConnection();
+
+    // 查询portfolio表中history_data字段，条件是symbol匹配
+    const [rows] = await connection.execute(
+      'SELECT history_data FROM portfolio WHERE asset_symbol = ? LIMIT 1',
+      [symbol]
+    );
+
+    if (rows.length === 0) {
+      res.status(404).json({ error: 'Symbol not found' });
+    } else {
+      let historyData;
+      try {
+        historyData = JSON.parse(rows[0].history_data);
+      } catch {
+        historyData = rows[0].history_data;
+      }
+      // 只返回history_data，不带symbol
+      res.json(historyData);
+    }
+  } catch (err) {
+    console.error('Database query error:', err);
+    res.status(500).json({ error: err.message});
+  } finally {
+    if (connection) connection.release();
+  }
+});
+
+
 // Start the Express server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
