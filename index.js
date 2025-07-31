@@ -364,7 +364,7 @@ app.get('/api/cash-amount', async (req, res) => {
 });
 
 app.post('/api/buy-asset', async (req, res) => {
-    const { asset_symbol, asset_type, quantity, price_per_unit, purchase_date } = req.body;
+    const { asset_symbol, asset_type, quantity, price_per_unit, trade_date } = req.body;
     let connection;
 
     if (!asset_type || !asset_symbol || !quantity || !price_per_unit) {
@@ -375,7 +375,7 @@ app.post('/api/buy-asset', async (req, res) => {
         return res.status(400).json({ error: 'Quantity and price per unit must be greater than 0.' });
     }
 
-    const trade_time = purchase_date ? new Date(purchase_date) : new Date();
+    const trade_time = trade_date ? new Date(trade_date) : new Date();
     const totalCost = Number(quantity) * Number(price_per_unit);
 
     try {
@@ -470,7 +470,7 @@ app.post('/api/buy-asset', async (req, res) => {
 });
 
 app.post('/api/sell-asset', async (req, res) => {
-  const { asset_symbol, quantity, price_per_unit, sell_date } = req.body;
+  const { asset_symbol, quantity, price_per_unit, trade_date } = req.body;
   let connection;
 
   // Basic input validation
@@ -478,7 +478,7 @@ app.post('/api/sell-asset', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields: asset_symbol, quantity, and price_per_unit are required.' });
   }
 
-  const trade_time = sell_date ? new Date(sell_date) : new Date();
+  const trade_time = trade_date ? new Date(trade_date) : new Date();
   const sellQuantity = Number(quantity);
   const sellPrice = Number(price_per_unit);
 

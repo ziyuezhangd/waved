@@ -831,19 +831,22 @@
         function createTradeModal() {
             const modalHTML = `
                 <div id="trade-modal" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden">
-                <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-                    <h2 id="trade-title" class="text-xl font-semibold mb-4">Trade Asset</h2>
-                    <label class="block mb-2">Quantity:</label>
-                    <input id="trade-quantity" type="number" class="border p-2 w-full mb-3" />
+                    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                        <h2 id="trade-title" class="text-xl font-semibold mb-4">Trade Asset</h2>
+                        <label class="block mb-2">Quantity:</label>
+                        <input id="trade-quantity" type="number" class="border p-2 w-full mb-3" />
 
-                    <label class="block mb-2">Price:</label>
-                    <input id="trade-price" type="number" class="border p-2 w-full mb-3" />
+                        <label class="block mb-2">Price:</label>
+                        <input id="trade-price" type="number" class="border p-2 w-full mb-3" />
 
-                    <div class="flex justify-end space-x-3">
-                    <button id="cancel-trade" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-                    <button id="confirm-trade" class="px-4 py-2 bg-blue-500 text-white rounded">Confirm</button>
+                        <label class="block mb-2">Date:</label>
+                        <input id="trade-date" type="date" class="border p-2 w-full mb-3" />
+
+                        <div class="flex justify-end space-x-3">
+                            <button id="cancel-trade" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+                            <button id="confirm-trade" class="px-4 py-2 bg-blue-500 text-white rounded">Confirm</button>
+                        </div>
                     </div>
-                </div>
                 </div>
                 `;
             document.body.insertAdjacentHTML("beforeend", modalHTML);
@@ -852,16 +855,21 @@
         // 页面加载完后插入弹窗
         document.addEventListener("DOMContentLoaded", () => {
             createTradeModal();
-            let currentTrade = { action: "", symbol: "" };
+            let currentTrade = { action: "", symbol: "", name:"", type: "" };
 
             // 给 Buy/Sell 按钮绑定事件
             document.addEventListener("click", (e) => {
                 if (e.target.classList.contains("buy-btn") || e.target.classList.contains("sell-btn")) {
                     const isBuy = e.target.classList.contains("buy-btn");
                     currentTrade.action = isBuy ? "buy" : "sell";
-                    // 获取当前行的 symbol
+                    // 获取当前行的基础信息
                     const row = e.target.closest("tr");
                     currentTrade.symbol = row.querySelector("td .symbol").textContent.trim();
+                    const icon = row.querySelector("td i");
+                    const className = icon.className;
+                    const match = className.match(/ri-(.*?)-line/);
+                    const assetType = match ? match[1] : null;
+                    currentTrade.type = row.querySelector("td i").className.match(/ri-(.*?)-line/)[1];
                     document.getElementById("trade-title").textContent = isBuy ? "Buy Asset" : "Sell Asset";
                     document.getElementById("trade-quantity").value = "";
                     document.getElementById("trade-price").value = "";
@@ -879,12 +887,15 @@
             document.getElementById("confirm-trade").addEventListener("click", async () => {
                 const quantity = parseInt(document.getElementById("trade-quantity").value);
                 const price = parseFloat(document.getElementById("trade-price").value);
+                const tradeDate = document.getElementById("trade-date").value;
 
                 const payload = {
-                    symbol: currentTrade.symbol,
-                    action: currentTrade.action,
-                    quantity,
-                    price
+                    asset_symbol: currentTrade.symbol,
+                    asset_type: currentTrade.type,
+                    quantity: quantity,
+                    price_per_unit: price,
+                    trade_date: tradeDate,
+                    action: currentTrade.action
                 };
                 console.log(payload);
 
@@ -895,14 +906,13 @@
                     } else {
                         url += 'sell-asset';
                     }
-                    // const res = await fetch("/api/trade", {
-                    //     method: "POST",
-                    //     headers: { "Content-Type": "application/json" },
-                    //     body: JSON.stringify({ symbol: currentTrade.symbol, quantity, price, type: currentTrade.type })
-                    // });
-                    // const result = await res.json();
-                    // console.log("Trade success:", result);
-                    console.log("Test");
+                    const res = await fetch(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await res.json();
+                    console.log("Trade success:", result);
                 } catch (err) {
                     console.error("Trade failed:", err);
                 }
