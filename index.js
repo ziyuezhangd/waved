@@ -705,6 +705,36 @@ app.get('/api/history_data/:symbol', async (req, res) => {
   }
 });
 
+app.get('/api/top-3-stock-symbols', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+
+        const [rows] = await connection.query(`
+            SELECT asset_symbol
+            FROM portfolio
+            WHERE asset_type = 'stock'
+            ORDER BY quantity DESC
+            LIMIT 3
+        `);
+
+        if (rows.length < 3) {
+            return res.status(200).json({
+                message: "Less than 3 stocks in your portfolio.",
+                symbols: rows.map(row => row.asset_symbol)
+            });
+        }
+
+        res.status(200).json({
+            symbols: rows.map(row => row.asset_symbol)
+        });
+    } catch (err) {
+        console.error('Error fetching top 3 stock symbols:', err);
+        res.status(500).json({ error: 'Failed to fetch top 3 stock symbols.' });
+    } finally {
+        if (connection) connection.release();
+    }
+});
 
 // Start the Express server
 app.listen(PORT, () => {
