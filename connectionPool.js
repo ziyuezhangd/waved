@@ -4,13 +4,13 @@ import mysql from 'mysql2/promise';
 // A pool is the standard way to manage connections in a web application
 const pool = mysql.createPool({
   // this info set is Amos's MySQL server
-  // host: '192.168.202.36',
-  // user: 'remote_user',
-  // password: '12345678',
+  host: '192.168.202.36',
+  user: 'remote_user',
+  password: '12345678',
   // this info set is for the local MySQL server on our VMs
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'n3u3da!',
+  // host: '127.0.0.1',
+  // user: 'root',
+  // password: 'n3u3da!',
   database: 'trading_journal',
   waitForConnections: true,
   connectionLimit: 10,
