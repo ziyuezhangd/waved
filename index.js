@@ -7,7 +7,8 @@ import { pool } from './connectionPool.js'; // Import the connection pool
 import { getStockData } from './services/stock1.js';
 
 
-import { getAllAssets, getAllPortfolio } from "./services/mockDB.js";
+import { getAllAssets, getAllPortfolio, getAllReturns } from "./services/mockDB.js";
+// import { mysqlConnection } from './mysql.js'; // Import the
 import yahooFinance from 'yahoo-finance2';
 // import mysql from 'mysql2'; // Import mysql2
 
@@ -101,6 +102,15 @@ app.get('/api/allAsset', async (req, res) => {
   try {
     const asset = await getAllAssets();
     res.json({asset})
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch asset data' });
+  }
+});
+
+app.get('/api/allReturn', async (req, res) => {
+  try {
+    const returns = await getAllReturns();
+    res.json({returns})
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch asset data' });
   }
@@ -628,6 +638,56 @@ app.get('/api/get-cost', async (req, res) => {
     } catch (err) {
         console.error('Error in /api/get-cost:', err);
         res.status(500).json({ error: 'Server error fetching asset costs.', details: err.message });
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+app.post('/api/cash-flow', async (req, res) => {
+    const { transaction_type, amount, notes } = req.body;
+    const allowedTypes = ['deposit', 'withdrawal'];
+
+    // ✅ 校验输入
+    if (!transaction_type || !amount) {
+        return res.status(400).json({ error: 'transaction_type and amount are required.' });
+    }
+
+    if (!allowedTypes.includes(transaction_type)) {
+        return res.status(400).json({ error: 'Invalid transaction_type. Must be deposit or withdrawal.' });
+    }
+
+    if (Number(amount) <= 0) {
+        return res.status(400).json({ error: 'Amount must be greater than 0.' });
+    }
+
+    let connection;
+    try {
+        connection = await pool.getConnection();
+
+        // ✅ 提前在 connection 获取后再做余额检查
+        if (transaction_type === 'withdrawal') {
+            const currentBalance = await getCurrentCashAmount(connection);
+            if (Number(amount) > currentBalance) {
+                return res.status(400).json({ error: 'Insufficient cash balance for withdrawal.' });
+            }
+        }
+
+        const now = new Date();
+        await connection.query(
+            `INSERT INTO cash_flow (transaction_time, transaction_type, amount, notes)
+             VALUES (?, ?, ?, ?)`,
+            [
+                now,
+                transaction_type,
+                transaction_type === 'withdrawal' ? -Number(amount) : Number(amount),
+                notes || `Cash ${transaction_type}`
+            ]
+        );
+
+        res.status(201).json({ message: `Cash ${transaction_type} recorded successfully.` });
+    } catch (err) {
+        console.error('Error in /api/cash-flow:', err);
+        res.status(500).json({ error: 'Failed to record cash flow.' });
     } finally {
         if (connection) connection.release();
     }

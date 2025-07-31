@@ -4,6 +4,11 @@ const mockAllAssets = {
     "Bonds": 8000,
     "Cash": 5000,
 };
+const mockAllReturns = {
+    "Stocks": 3600,
+    "ETFs": 1800,
+    "Bonds": 400,
+};
 const mockCash = 70000;
 const mockAllSymbols = ["AAPL", "AMZN", "TSLA", "MSFT", "SPY", "BND", "AGG", "^IRX", "ZN=F"];
 const mockAllPortfolio = [
@@ -22,6 +27,11 @@ const mockAllPortfolio = [
 // Returns data for all assets (example:{"Stocks": 22000, "ETFs": 15000, "Bonds": 8000, "Cash": 5000,})
 export const getAllAssets = async () => {
     return mockAllAssets;
+};
+
+// Returns data for all returns (example:{"Stocks": 3600, "ETFs": 1800, "Bonds": 400,})
+export const getAllReturns = async () => {
+    return mockAllReturns;
 };
 
 // Returns cash amount (example: 70000)
