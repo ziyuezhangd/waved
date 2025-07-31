@@ -7,7 +7,6 @@ import { pool } from './connectionPool.js'; // Import the connection pool
 import { getStockData } from './services/stock1.js';
 
 
-import { getAllAssets, getAllPortfolio, getAllReturns } from "./services/mockDB.js";
 // import { mysqlConnection } from './mysql.js'; // Import the
 import yahooFinance from 'yahoo-finance2';
 // import mysql from 'mysql2'; // Import mysql2
@@ -104,35 +103,6 @@ app.get('/api/portfolio/performance', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch portfolio performance' });
   }
 });
-
-// --- New API Endpoints ---
-app.get('/api/allAsset', async (req, res) => {
-  try {
-    const asset = await getAllAssets();
-    res.json({asset})
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch asset data' });
-  }
-});
-
-app.get('/api/allReturn', async (req, res) => {
-  try {
-    const returns = await getAllReturns();
-    res.json({returns})
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch asset data' });
-  }
-});
-
-app.get('/api/portfolio', async (req, res) => {
-  try {
-    const portfolio = await getAllPortfolio();
-    res.json(portfolio);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch portfolio data' });
-  }
-});
-
 
 
 app.get('/api/db-test', (req, res) => {
@@ -702,7 +672,7 @@ app.post('/api/cash-flow', async (req, res) => {
 });
 
 
-app.get('/api/history_date/:symbol', async (req, res) => {
+app.get('/api/history_data/:symbol', async (req, res) => {
   const symbol = req.params.symbol;
 
   let connection;
