@@ -321,10 +321,10 @@ app.get('/api/all-portfolio', async (req, res) => {
     }
 });
 
-// 计算当前现金余额（使用数据库连接）
+// in index.js
 async function getCurrentCashAmount(connection) {
     const [[{ balance }]] = await connection.query('SELECT SUM(amount) AS balance FROM cash_flow');
-    return balance ?? 0;
+    return parseFloat(balance) || 0; // Use parseFloat to convert the string to a number
 }
 
 app.get('/api/cash-amount', async (req, res) => {

@@ -119,3 +119,121 @@ describe('Trading API Endpoints', () => {
         expect(response.body.error).toContain('Not enough quantity to sell');
     });
 });
+
+describe('POST /api/cash-flow', () => {
+    test('should record a new deposit and increase the cash balance', async () => {
+        const initialCash = await getCurrentCash();
+        const depositAmount = 5000;
+
+        const response = await request(app)
+            .post('/api/cash-flow')
+            .send({
+                transaction_type: 'deposit',
+                amount: depositAmount,
+                notes: 'Test deposit'
+            });
+        
+        expect(response.statusCode).toBe(201);
+        expect(response.body.message).toContain('recorded successfully');
+
+        const finalCash = await getCurrentCash();
+        expect(finalCash).toBe(initialCash + depositAmount);
+    });
+
+    test('should return a 400 error for withdrawals exceeding the cash balance', async () => {
+        const initialCash = await getCurrentCash();
+        const withdrawalAmount = initialCash + 1000; // An impossible amount
+
+        const response = await request(app)
+            .post('/api/cash-flow')
+            .send({
+                transaction_type: 'withdrawal',
+                amount: withdrawalAmount,
+            });
+        
+        expect(response.statusCode).toBe(400);
+        expect(response.body.error).toContain('Insufficient cash balance for withdrawal');
+    });
+});
+
+
+describe('GET /api/all-portfolio', () => {
+    test('should return portfolio with current price and performance data', async () => {
+        // Setup: Insert a known asset directly into the DB for this test
+        await pool.execute(
+            'INSERT INTO portfolio (asset_symbol, asset_type, asset_name, quantity, avg_purchase_price) VALUES (?, ?, ?, ?, ?)',
+            ['AAPL', 'stock', 'Apple Inc.', 10, 150.00]
+        );
+
+        // Mock the price for the asset we just inserted
+        yahooFinance.quote.mockResolvedValue({
+            symbol: 'AAPL',
+            regularMarketPrice: 170.00, // Current price is higher than purchase price
+        });
+
+        const response = await request(app).get('/api/all-portfolio');
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toBeInstanceOf(Array);
+        expect(response.body.length).toBe(1);
+
+        const asset = response.body[0];
+        expect(asset.asset_symbol).toBe('AAPL');
+        expect(asset.current_price).toBe(170.00);
+        expect(asset.total_value).toBe(1700.00); // 10 shares * $170
+        expect(asset.performance).toBe('+13.33%'); // ((170-150)/150)*100
+    });
+});
+
+
+describe('GET /api/portfolio-summary', () => {
+    test('should return an aggregated summary of asset values by type', async () => {
+        // Setup: Insert a stock and an ETF
+        await pool.execute(
+            'INSERT INTO portfolio (asset_symbol, asset_type, asset_name, quantity, avg_purchase_price) VALUES (?, ?, ?, ?, ?), (?, ?, ?, ?, ?)',
+            ['GOOG', 'stock', 'Google', 10, 100.00, 'SPY', 'etf', 'S&P 500 ETF', 20, 300.00]
+        );
+
+        // Mock prices for all assets in the portfolio
+        yahooFinance.quote.mockImplementation(symbol => {
+            if (symbol === 'GOOG') {
+                return Promise.resolve({ regularMarketPrice: 110.00 });
+            }
+            if (symbol === 'SPY') {
+                return Promise.resolve({ regularMarketPrice: 310.00 });
+            }
+            return Promise.resolve({});
+        });
+
+        const response = await request(app).get('/api/portfolio-summary');
+        
+        expect(response.statusCode).toBe(200);
+
+        const summary = response.body;
+        expect(summary.Stocks).toBeCloseTo(1100.00);  // 10 * $110
+        expect(summary.ETFs).toBeCloseTo(6200.00);   // 20 * $310
+        expect(summary.Bonds).toBe(0);
+        expect(summary.Cash).toBe(50000.00);
+    });
+});
+
+
+describe('GET /api/get-cost', () => {
+    test('should return the total purchase cost for each asset type', async () => {
+        // Setup: Insert assets with known purchase costs
+        await pool.execute(
+            'INSERT INTO portfolio (asset_symbol, asset_type, asset_name, quantity, avg_purchase_price) VALUES (?, ?, ?, ?, ?), (?, ?, ?, ?, ?)',
+            ['GOOG', 'stock', 'Google', 10, 100.00, 'MSFT', 'stock', 'Microsoft', 5, 200.00]
+        );
+
+        const response = await request(app).get('/api/get-cost');
+
+        expect(response.statusCode).toBe(200);
+        
+        const costs = response.body;
+        // Total stock cost = (10 * 100) + (5 * 200) = 1000 + 1000 = 2000
+        expect(costs.stock).toBe(2000);
+        expect(costs.etf).toBe(0);
+        expect(costs.bond).toBe(0);
+    });
+});
