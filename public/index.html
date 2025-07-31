@@ -46,10 +46,10 @@
                     </div>
                 </div>
                 <div id="totalValue" class="text-2xl font-bold text-gray-900 mb-1">$0.00</div>
-                <div class="flex items-center text-sm mb-2">
+                <!-- <div class="flex items-center text-sm mb-2">
                     <span class="text-green-600 font-medium">+2.34%</span>
                     <span class="text-gray-500 ml-1">from last month</span>
-                </div>
+                </div> -->
                 <div class="space-y-1.5">
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500">Stocks</span>
@@ -94,7 +94,7 @@
             </div>
             <div class="text-sm">
                 <span class="font-medium text-gray-900" id="stocksReturn">$0.0</span>
-                <span class="text-green-600 ml-2" id="stocksReturnPercent">+24.5%</span>
+                <span class="text-green-600 ml-2" id="stocksReturnPercent">+0.0%</span>
             </div>
         </div>
         <div class="flex justify-between items-center">
@@ -104,7 +104,7 @@
             </div>
             <div class="text-sm">
                 <span class="font-medium text-gray-900" id="etfsReturn">$0.0</span>
-                <span class="text-green-600 ml-2" id="etfsReturnPercent">+15.8%</span>
+                <span class="text-green-600 ml-2" id="etfsReturnPercent">+0.0%</span>
             </div>
         </div>
         <div class="flex justify-between items-center">
@@ -114,7 +114,7 @@
             </div>
             <div class="text-sm">
                 <span class="font-medium text-gray-900" id="bondsReturn">$0.0</span>
-                <span class="text-green-600 ml-2" id="bondsReturnPercent">+12.3%</span>
+                <span class="text-green-600 ml-2" id="bondsReturnPercent">+0.0%</span>
             </div>
         </div>
         </div>
@@ -150,15 +150,15 @@
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
     <div class="lg:col-span-2 bg-white rounded-xl p-6 border border-gray-200">
-    <div class="flex items-center justify-between mb-6">
-    <h2 class="text-xl font-bold text-gray-900">Portfolio Performance</h2>
-    <div class="flex space-x-2">
-    <button class="px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-button">1D</button>
-    <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1W</button>
-    <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">1M</button>
-    </div>
-    </div>
-    <div id="portfolioChart" style="height: 300px;"></div>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-gray-900">Stock Performance</h2>
+            <div class="flex space-x-2">
+                <button class="px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-button">AAPL</button>
+                <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">AMZN</button>
+                <button class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button">MSFT</button>
+            </div>
+        </div>
+        <div id="portfolioChart" style="height: 300px;"></div>
     </div>
     <div class="bg-white rounded-xl p-6 border border-gray-200">
     <h2 class="text-xl font-bold text-gray-900 mb-6">Asset Allocation</h2>
@@ -319,146 +319,124 @@
     <!-- Below are all scripts -->
     <script id="chartInit">
     document.addEventListener('DOMContentLoaded', function() {
-    const portfolioChart = echarts.init(document.getElementById('portfolioChart'));
-    const allocationChart = echarts.init(document.getElementById('allocationChart'));
+        const portfolioChart = echarts.init(document.getElementById('portfolioChart'));
+        const allocationChart = echarts.init(document.getElementById('allocationChart'));
 
-    //Initial chart options
-    let currentView = '1D';
-    let currrentSymbol = 'AAPL';
+        //Initial chart options
+        let currrentSymbol = 'null';
 
-    //Initialize chart with empty data
-
-    const portfolioOption = {
-    animation: false,
-    grid: {
-    left: 0,
-    right: 0,
-    top: 40,
-    bottom: 0,
-    data: ['Price'],
-    textStyle: { color: '#1f2937' }
-    },
-    legend: {
-    top: 0,
-    data: ['Total Portfolio Value', 'Stocks', 'ETFs', 'Bonds', 'Cash'],
-    textStyle: { color: '#1f2937' }
-    },
-    xAxis: {
-      type: 'category',
-      data: [],
-      axisLine: { show: true },
-      axisTick: { show: true },
-      axisLabel: { show: true, color: '#6b7280' },
-      splitLine: { show: true, lineStyle: { color: '#e5e7eb' } }
-    },
-    yAxis: {
-      type: 'value',
-      axisLine: { show: true },
-      axisTick: { show: true },
-      axisLabel: { show: true, color: '#6b7280' },
-      splitLine: { show: true, lineStyle: { color: '#e5e7eb' } }
-    },
-    series: [
-    {
-    name: 'Total Portfolio Value',
-    data: [],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: '#1e40af', width: 3 },
-    z: 5
-    },
-    {
-    name: 'Stocks',
-    data: [],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(87, 181, 231, 1)', width: 2 }
-    },
-    {
-    name: 'ETFs',
-    data: [],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(87, 181, 231, 1)', width: 2 }
-    },
-    {
-    name: 'Bonds',
-    data: [],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(251, 191, 114, 1)', width: 2 }
-    },
-    {
-    name: 'Cash',
-    data: [],
-    type: 'line',
-    smooth: true,
-    symbol: 'none',
-    lineStyle: { color: 'rgba(252, 141, 98, 1)', width: 2 }
-    }
-    ],
-    tooltip: {
-    trigger: 'axis',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderColor: '#e5e7eb',
-    textStyle: { color: '#1f2937' }
-    }
-    };
-
-    portfolioChart.setOption(portfolioOption);
-
-
-    async function fetchChartData(range) {
-      const res = await fetch(`/api/portfolio/performance?range=${range}`);
-      return await res.json(); // {xAxis: [...], series: [[...], [...], ...]}
-      
-    }
-
-    async function updatePortfolioChart(range){
-      try{
-        const data = await fetchChartData(range);
-
-        if (!data || !data.xAxis || !data.series) {
-          console.error('Invalid data format:', data);
-          return;
-        }
-
-        console.log('xAxis:', data.xAxis, 'series:', data.series);
-
-        portfolioOption.xAxis.data = data.xAxis;
-
-        if (data.series.length === 1) {
-          portfolioOption.series[0].data = data.series[0];
-        } else {
-          portfolioOption.series.forEach((series, index) => {
-            series.data = data.series[index] || [];
-          });
-        }
+        // 初始配置
+        const portfolioOption = {
+            animation: false,
+            grid: { left: 60, right: 20, top: 40, bottom: 50 },
+            xAxis: {
+                type: 'category',
+                data: [],
+                name: 'Date',
+                nameLocation: 'middle',
+                nameGap: 25,
+                axisLabel: {
+                    color: '#6b7280',
+                    formatter: function (value) {
+                        return value.slice(5); // 显示 MM-DD
+                    }
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Price (USD)',       // 纵轴标题
+                nameLocation: 'middle',
+                nameGap: 40,
+                axisLabel: { color: '#6b7280' },
+                min: function (value) {
+                    const raw = value.min * 0.98;
+                    return Math.floor(raw / 10) * 10;
+                },
+                max: function (value) {
+                    const raw = value.max * 1.02;
+                    return Math.ceil(raw / 10) * 10;
+                }
+            },
+            series: [{
+                name: 'Price',
+                data: [],
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { color: '#1e40af', width: 3 }
+            }],
+            tooltip: { trigger: 'axis' }
+        };
         portfolioChart.setOption(portfolioOption);
-      }catch(e) {
-        console.error('Error fetching chart data:', e);
-      }
-      
-    }
 
-    //Initial load
-    updatePortfolioChart(currentView);
+        async function fetchPerformanceData(symbol) {
+            const res = await fetch(`/api/history_data/${symbol}`);
+            return await res.json();
+        }
 
-    //Update chart when time range buttons are clicked
-    const timeButtons = document.querySelectorAll('.lg\\:col-span-2 button');
-    timeButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-          const label = btn.textContent.trim();
-          if (['1D', '1W', '1M'].includes(label)) {
-            currentView = label;
-            updatePortfolioChart(label);
-          }
-        });
-      });
+        async function updatePortfolioChart(symbol) {
+            try {
+                const dataObj = await fetchPerformanceData(symbol);
+
+                // 把对象转成数组并按日期排序
+                const entries = Object.entries(dataObj).sort((a, b) => new Date(a[0]) - new Date(b[0]));
+                const xAxisData = entries.map(e => e[0]);  // 日期
+                const seriesData = entries.map(e => e[1]); // 价格
+
+                portfolioOption.xAxis.data = xAxisData;
+                portfolioOption.series[0].data = seriesData;
+
+                portfolioChart.setOption(portfolioOption);
+            } catch (e) {
+                console.error("Error fetching chart data:", e);
+            }
+        }
+
+
+        // 动态生成按钮并绑定事件
+        async function initStockButtons() {
+            try {
+                // const res = await fetch('/api/portfolio/holdings');
+                // const data = await res.json(); // { symbol: ["AAPL", "TSLA", "MSFT"] }
+
+                // const topSymbols = data.symbol || ["AAPL", "TSLA", "MSFT"];
+                const topSymbols = ["AAPL", "TSLA", "MSFT"];
+
+                const btnContainer = document.querySelector('.lg\\:col-span-2 .flex.space-x-2');
+                btnContainer.innerHTML = '';
+
+                topSymbols.forEach((symbol, idx) => {
+                    const btn = document.createElement('button');
+                    btn.textContent = symbol;
+                    btn.className = `px-3 py-1 text-sm font-medium rounded-button ${
+                        idx === 0 ? 'text-primary bg-primary/10' : 'text-gray-600 hover:text-primary'
+                    }`;
+
+                    btn.addEventListener('click', () => {
+                        // 更新按钮样式
+                        btnContainer.querySelectorAll('button').forEach(b => {
+                            b.className = 'px-3 py-1 text-sm font-medium text-gray-600 hover:text-primary rounded-button';
+                        });
+                        btn.className = 'px-3 py-1 text-sm font-medium text-primary bg-primary/10 rounded-button';
+
+                        currentSymbol = symbol;
+                        updatePortfolioChart(symbol);
+                    });
+
+                    btnContainer.appendChild(btn);
+                });
+
+                // 默认点击第一个按钮
+                if (btnContainer.firstChild) {
+                    btnContainer.firstChild.click();
+                }
+            } catch (err) {
+                console.error('Failed to load holdings:', err);
+            }
+        }
+
+        initStockButtons();
+
         // 动态获取资产分布数据并绘制饼图
         async function drawAllocationChart() {
             try {

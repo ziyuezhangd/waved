@@ -7,7 +7,6 @@ import { pool } from './connectionPool.js'; // Import the connection pool
 import { getStockData } from './services/stock1.js';
 
 
-import { getAllAssets, getAllPortfolio, getAllReturns } from "./services/mockDB.js";
 // import { mysqlConnection } from './mysql.js'; // Import the
 import yahooFinance from 'yahoo-finance2';
 // import mysql from 'mysql2'; // Import mysql2
@@ -104,35 +103,6 @@ app.get('/api/portfolio/performance', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch portfolio performance' });
   }
 });
-
-// --- New API Endpoints ---
-app.get('/api/allAsset', async (req, res) => {
-  try {
-    const asset = await getAllAssets();
-    res.json({asset})
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch asset data' });
-  }
-});
-
-app.get('/api/allReturn', async (req, res) => {
-  try {
-    const returns = await getAllReturns();
-    res.json({returns})
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch asset data' });
-  }
-});
-
-app.get('/api/portfolio', async (req, res) => {
-  try {
-    const portfolio = await getAllPortfolio();
-    res.json(portfolio);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch portfolio data' });
-  }
-});
-
 
 
 app.get('/api/db-test', (req, res) => {
@@ -702,7 +672,7 @@ app.post('/api/cash-flow', async (req, res) => {
 });
 
 
-app.get('/api/history_date/:symbol', async (req, res) => {
+app.get('/api/history_data/:symbol', async (req, res) => {
   const symbol = req.params.symbol;
 
   let connection;
@@ -735,6 +705,36 @@ app.get('/api/history_date/:symbol', async (req, res) => {
   }
 });
 
+app.get('/api/top-3-stock-symbols', async (req, res) => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+
+        const [rows] = await connection.query(`
+            SELECT asset_symbol
+            FROM portfolio
+            WHERE asset_type = 'stock'
+            ORDER BY quantity DESC
+            LIMIT 3
+        `);
+
+        if (rows.length < 3) {
+            return res.status(200).json({
+                message: "Less than 3 stocks in your portfolio.",
+                symbols: rows.map(row => row.asset_symbol)
+            });
+        }
+
+        res.status(200).json({
+            symbols: rows.map(row => row.asset_symbol)
+        });
+    } catch (err) {
+        console.error('Error fetching top 3 stock symbols:', err);
+        res.status(500).json({ error: 'Failed to fetch top 3 stock symbols.' });
+    } finally {
+        if (connection) connection.release();
+    }
+});
 
 // Start the Express server only if this file is run directly
 const server = app.listen(PORT, () => {
