@@ -564,13 +564,28 @@
                     amount: amount,
                 }
                 console.log(message);
-                const res2 = await fetch("/api/cash-flow", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(message)
-                });
-                const data2 = await res2.json();
-                console.log(data2);
+                try {
+                    const res2 = await fetch("/api/cash-flow", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(message)
+                    });
+
+                    const data2 = await res2.json();
+                    console.log(data2);
+
+                    // 请求成功后刷新页面
+                    window.location.reload();
+                } catch (err) {
+                    console.error("Failed to post cash flow:", err);
+                }
+                // const res2 = await fetch("/api/cash-flow", {
+                //     method: "POST",
+                //     headers: { "Content-Type": "application/json" },
+                //     body: JSON.stringify(message)
+                // });
+                // const data2 = await res2.json();
+                // console.log(data2);
 
                 cashModal.classList.add('hidden');
                 resetCashForm();
@@ -890,6 +905,7 @@
                     });
                     const result = await res.json();
                     console.log("Trade success:", result);
+                    window.location.reload();
                 } catch (err) {
                     console.error("Trade failed:", err);
                 }
@@ -945,6 +961,7 @@
                     });
                     const result = await res.json();
                     console.log("Trade success:", result);
+                    window.location.reload();
                 } catch (err) {
                     console.error("Trade failed:", err);
                 }
