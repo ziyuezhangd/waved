@@ -392,15 +392,14 @@
             }
         }
 
-
         // 动态生成按钮并绑定事件
         async function initStockButtons() {
             try {
-                // const res = await fetch('/api/portfolio/holdings');
-                // const data = await res.json(); // { symbol: ["AAPL", "TSLA", "MSFT"] }
+                const res = await fetch('/api/top-3-stock-symbols');
+                const data = await res.json(); // { symbols: ["AAPL", "TSLA", "MSFT"] }
 
-                // const topSymbols = data.symbol || ["AAPL", "TSLA", "MSFT"];
-                const topSymbols = ["AAPL", "TSLA", "MSFT"];
+                const topSymbols = data.symbols || ["AAPL", "TSLA", "NVDA"];
+                // const topSymbols = ["AAPL", "TSLA", "MSFT"];
 
                 const btnContainer = document.querySelector('.lg\\:col-span-2 .flex.space-x-2');
                 btnContainer.innerHTML = '';
