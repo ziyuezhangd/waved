@@ -535,7 +535,7 @@
             let transactionType = 'deposit';
             const res1 = await fetch('/api/cash-amount');
             const cash = await res1.json(); // 后端返回的是 { balance: 1000.00 }
-            let currentCash = await cash.balance || 0.00; // 确保有初始值
+            let currentCash = await Number(cash.balance) || 0.00; // 确保有初始值
             const cashValueElement = document.getElementById('cashValue');
             manageCashBtn.addEventListener('click', function() {
                 cashModal.classList.remove('hidden');
@@ -560,7 +560,7 @@
                 withdrawBtn.classList.add('text-gray-700');
             });
             withdrawBtn.addEventListener('click', function() {
-                transactionType = 'withdraw';
+                transactionType = 'withdrawal';
                 withdrawBtn.classList.add('bg-primary', 'text-white');
                 withdrawBtn.classList.remove('text-gray-700');
                 depositBtn.classList.remove('bg-primary', 'text-white');
@@ -573,7 +573,7 @@
                     cashAmountInput.classList.add('border-red-500');
                     return;
                 }
-                if (transactionType === 'withdraw' && amount > currentCash) {
+                if (transactionType === 'withdrawal' && amount > currentCash) {
                     cashAmountInput.classList.add('border-red-500');
                     return;
                 }
@@ -581,13 +581,19 @@
                 cashValueElement.textContent = `$${currentCash.toFixed(2)}`;
                 // updateCashInChart();
 
-                // 模拟后端调用
-                console.log("Transaction Type:", transactionType, "Amount:", amount);
-                // await fetch("/api/manage-cash", {
-                //     method: "POST",
-                //     headers: { "Content-Type": "application/json" },
-                //     body: JSON.stringify({ transactionType, amount })
-                // });
+                // 后端调用
+                const message = {
+                    transaction_type: transactionType,
+                    amount: amount,
+                }
+                console.log(message);
+                const res2 = await fetch("/api/cash-flow", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(message)
+                });
+                const data2 = await res2.json();
+                console.log(data2);
 
                 cashModal.classList.add('hidden');
                 resetCashForm();
@@ -800,7 +806,7 @@
                     } else if (percent < 0) {
                         el.classList.add('text-red-600');
                     } else {
-                        el.classList.add('text-gray-600'); // 0 时灰色，可选
+                        el.classList.add('text-gray-600'); // 0 时灰色
                     }
                 }
 
@@ -927,10 +933,26 @@
                 const purchasePrice = parseFloat(form.querySelector("input[placeholder='Enter purchase price']").value);
                 const purchaseDate = form.querySelector("input[type='date']").value;
 
-                const payload = { assetType, assetSymbol, quantity, purchasePrice, purchaseDate };
-
-                // 模拟请求后端
-                console.log("模拟提交：", payload);
+                const payload = { 
+                    "asset_symbol":assetSymbol, 
+                    "asset_type": assetType, 
+                    "quantity": quantity, 
+                    "price_per_unit": purchasePrice, 
+                    "purchase_date": purchaseDate 
+                };
+                console.log(payload);
+                // 请求后端
+                // try {
+                //     const res = await fetch("/api/buy-asset", {
+                //         method: "POST",
+                //         headers: { "Content-Type": "application/json" },
+                //         body: JSON.stringify(payload)
+                //     });
+                //     const result = await res.json();
+                //     console.log("Trade success:", result);
+                // } catch (err) {
+                //     console.error("Trade failed:", err);
+                // }
 
                 closeModal();
             });
