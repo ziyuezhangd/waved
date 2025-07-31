@@ -8,6 +8,11 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "start": "node index.js"
   },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ziyuezhangd/wavedo.git"
@@ -26,5 +31,8 @@
     "mysql2": "^3.14.2",
     "yahoo-finance2": "^2.13.3"
   },
-  "keywords": []
+  "keywords": [],
+  "devDependencies": {
+    "supertest": "^7.1.4"
+  }
 }

@@ -736,7 +736,10 @@ app.get('/api/history_date/:symbol', async (req, res) => {
 });
 
 
-// Start the Express server
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+// Start the Express server only if this file is run directly
+const server = app.listen(PORT, () => {
+    console.log(`Server is running at http://localhost:${PORT}`);
 });
+
+// Export app and server for testing purposes
+export { app, server , pool };
